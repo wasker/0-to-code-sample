@@ -12,11 +12,14 @@ var gulp = require("gulp"),
 var paths = {
   webroot: "./" + project.webroot + "/",
   appScripts: "./scripts/",
+  templates: "./scripts/templates/",
   typings: "./typings/"
 };
 
 paths.appOut = paths.webroot + "js/";
 paths.appSources = paths.appScripts + "**/*.ts";
+paths.templatesOut = paths.webroot + "templates/";
+paths.templateFiles = paths.templates + "**/*.html";
 paths.js = paths.appOut + "**/*.js";
 paths.minJs = paths.webroot + "js/**/*.min.js";
 paths.css = paths.webroot + "css/**/*.css";
@@ -67,4 +70,9 @@ gulp.task("compile-app", function () {
   return tscResult.js
           .pipe(sourcemaps.write("maps/"))                  //  Relative to appOut.
           .pipe(gulp.dest(paths.appOut));
+});
+
+gulp.task("copy-templates", function () {
+  gulp.src(paths.templateFiles)
+    .pipe(gulp.dest(paths.templatesOut));
 });
