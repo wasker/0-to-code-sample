@@ -25,6 +25,9 @@ bld/
 # Ignore downloaded bower dependencies.
 wwwroot/lib/
 
+# Ignore compilation artifacts.
+wwwroot/js/
+
 # Visual Studio 2015 cache/options directory
 .vs/
 

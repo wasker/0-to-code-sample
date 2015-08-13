@@ -5,13 +5,19 @@ var gulp = require("gulp"),
   concat = require("gulp-concat"),
   cssmin = require("gulp-cssmin"),
   uglify = require("gulp-uglify"),
+  tsc = require("gulp-typescript"),
+  sourcemaps = require("gulp-sourcemaps"),
   project = require("./project.json");
 
 var paths = {
-  webroot: "./" + project.webroot + "/"
+  webroot: "./" + project.webroot + "/",
+  appScripts: "./scripts/",
+  typings: "./typings/"
 };
 
-paths.js = paths.webroot + "js/**/*.js";
+paths.appOut = paths.webroot + "js/";
+paths.appSources = paths.appScripts + "**/*.ts";
+paths.js = paths.appOut + "**/*.js";
 paths.minJs = paths.webroot + "js/**/*.min.js";
 paths.css = paths.webroot + "css/**/*.css";
 paths.minCss = paths.webroot + "css/**/*.min.css";
@@ -45,3 +51,20 @@ gulp.task("min:css", function() {
 });
 
 gulp.task("min", ["min:js", "min:css"]);
+
+gulp.task("compile-app", function () {
+  var tscResult = gulp.src([paths.appSources, paths.typings + "**/*.d.ts"])
+                    .pipe(sourcemaps.init())
+                    .pipe(tsc({
+                      target: "ES5",
+                      removeComments: true,
+                      noImplicitAny: true,
+                      noEmitOnError: true,
+                      noExternalResolve: true,
+                      out: "app.js"
+                    }));  
+
+  return tscResult.js
+          .pipe(sourcemaps.write("maps/"))                  //  Relative to appOut.
+          .pipe(gulp.dest(paths.appOut));
+});
