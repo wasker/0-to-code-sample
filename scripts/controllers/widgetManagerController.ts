@@ -5,12 +5,13 @@ namespace WidgetRegistry {
 	/** Widget manager controller. */	
 	export class WidgetManagerController {
 		/** Dependencies. */
-		public static $inject = ["appConfig", "$scope", "widgetService"];
+		public static $inject = ["appConfig", "$scope", "widgetService", "$modal"];
 
 		constructor(
 			private appConfig: AppConfig,
 			private $scope: WidgetManagerScope,
-			private widgetService: IWidgetService) {
+			private widgetService: IWidgetService,
+			private $modal: ng.ui.bootstrap.IModalService) {
 
 			$scope.model = {
 				widgets: [],
@@ -22,12 +23,8 @@ namespace WidgetRegistry {
 			$scope.undeleteWidget = this.undeleteWidget;
 
 			this.performOperation(this.widgetService.getWidgets()
-				.then((widgets: WidgetList) => this.hello(widgets))
+				.then((widgets: WidgetList) => this.$scope.model.widgets = widgets)
 				.catch(() => this.$scope.model.errorMessage = "Cannot get list of widgets. Please try again later."));
-		}
-		
-		private hello = (widgets: WidgetList) =>{
-			this.$scope.model.widgets = widgets;
 		}
 
 		/** Wraps an operation with operationInProgress indicator. */		
@@ -40,12 +37,26 @@ namespace WidgetRegistry {
 
 		/** Part of WidgetManagerScope. */		
 		private addWidget = (): void => {
-			alert("add");
+			var widget: Widget = {
+				$state: WidgetState.new,
+				id: (Math.random() * 100).toFixed(0),
+				name: "",
+				amount: Math.random() * 1000,
+				description: ""
+			};
+		
+			this.editWidgetImpl(widget, this.widgetService.createWidget).then(() => {
+				this.$scope.model.widgets.push(widget);
+			});	
 		}
-
+		
 		/** Part of WidgetManagerScope. */		
 		private editWidget = (widget: Widget): void => {
-			alert("edit");
+			var selectedWidget = angular.copy(widget);
+		
+			this.editWidgetImpl(selectedWidget, this.widgetService.updateWidget).then(() => {
+				angular.copy(selectedWidget, widget);
+			});	
 		}
 
 		/** Part of WidgetManagerScope. */		
@@ -58,6 +69,22 @@ namespace WidgetRegistry {
 		private undeleteWidget = (widget: Widget): void => {
 			alert("undelete");
 			widget.$state = WidgetState.existing;
+		}
+		
+		/** Invokes widget editor. */		
+		private editWidgetImpl = (widget: Widget, callback: WidgetOperationCallback): ng.IPromise<any> => {
+			return this.$modal.open({
+				resolve: {
+					model: (): WidgetEditorModel => {
+						return {
+							widget: widget,
+							performWidgetOperation: callback
+						};
+					}
+				},
+				templateUrl: this.$scope.pathToTemplate("widgetEditor.html"),
+				controller: "widgetEditorController"
+			}).result;	
 		}
 	}
 
