@@ -41,7 +41,7 @@ namespace WidgetRegistry {
 				$state: WidgetState.new,
 				id: (Math.random() * 100).toFixed(0),
 				name: "",
-				amount: Math.random() * 1000,
+				amount: Math.floor(Math.random() * 1000),
 				description: ""
 			};
 		
@@ -61,14 +61,43 @@ namespace WidgetRegistry {
 
 		/** Part of WidgetManagerScope. */		
 		private deleteWidget = (widget: Widget): void => {
-			alert("delete");
-			widget.$state = WidgetState.deleted;
+			var widgetWasNew = (widget.$state && WidgetState.new == widget.$state);
+			widget.$state = WidgetState.deleting;
+
+			this.performOperation(
+				this.widgetService.deleteWidget(widget)
+					.then(() => {
+						if (widgetWasNew) {
+							//	Delete newly created widgets.
+							var idx = this.$scope.model.widgets.indexOf(widget);
+							if (idx > -1) {
+								this.$scope.model.widgets.splice(idx, 1);
+							}
+						}
+						else {
+							//	Allow to undo when an existing widget was deleted.
+							widget.$state = WidgetState.deleted;
+						}
+					})
+					.catch(() => {
+						widget.$state = (widgetWasNew) ? WidgetState.new : WidgetState.existing;
+						this.$scope.model.errorMessage = "Cannot delete widget. Please try again later.";
+					}));
 		}
 
 		/** Part of WidgetManagerScope. */		
 		private undeleteWidget = (widget: Widget): void => {
-			alert("undelete");
-			widget.$state = WidgetState.existing;
+			widget.$state = WidgetState.undeleting;
+
+			this.performOperation(
+				this.widgetService.undoWidgetDelete(widget)
+					.then(() => {
+						widget.$state = WidgetState.existing;
+					})
+					.catch(() => {
+						widget.$state = WidgetState.deleted;
+						this.$scope.model.errorMessage = "Cannot restore deleted widget. Please try again later.";
+					}));
 		}
 		
 		/** Invokes widget editor. */		

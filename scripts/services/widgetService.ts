@@ -5,60 +5,54 @@ namespace WidgetRegistry {
 	/** Backend service communications. */	
 	export class WidgetService implements IWidgetService {
 		//	Dependencies.
-		public static $inject = ["appConfig", "$q"];
+		public static $inject = ["appConfig", "$q", "$http"];
 
 		constructor(
 			private appConfig: AppConfig,
-			private promise: ng.IQService) {
+			private $q: ng.IQService,
+			private $http: ng.IHttpService) {
 		}
 
-		/** Part of IWidgetService. */		
+		/** Part of IWidgetService. */
 		public getWidgets = (): ng.IPromise<WidgetList> => {
-			var operation = this.promise.defer();
-			
-			operation.resolve([{
-				id: "widget_1",
-				name: "Some widget",
-				amount: 100,
-				description: "This is the best widget ever"
-			}]);
-			
-			return operation.promise;
+			return this.httpPromiseAsPromise(this.$http.get(this.appConfig.apiEndpoint + "all"));
 		}
 
-		/** Part of IWidgetService. */		
+		/** Part of IWidgetService. */
 		public createWidget = (widget: Widget): ng.IPromise<any> => {
-			var operation = this.promise.defer();
-			operation.resolve();
-			
-			return operation.promise;
+			return this.$http.put(this.appConfig.apiEndpoint, widget);
 		}
 
-		/** Part of IWidgetService. */		
+		/** Part of IWidgetService. */
 		public updateWidget = (widget: Widget): ng.IPromise<any> => {
-			var operation = this.promise.defer();
-			operation.resolve();
-			
-			return operation.promise;
+			return this.$http.post(this.appConfig.apiEndpoint, widget);
 		}
 
-		/** Part of IWidgetService. */		
+		/** Part of IWidgetService. */
 		public deleteWidget = (widget: Widget): ng.IPromise<any> => {
-			var operation = this.promise.defer();
-			operation.resolve();
-			
-			return operation.promise;
+			return this.$http.delete(this.appConfig.apiEndpoint, { params: widget });
 		}
 
-		/** Part of IWidgetService. */		
+		/** Part of IWidgetService. */
 		public undoWidgetDelete = (widget: Widget): ng.IPromise<any> => {
-			var operation = this.promise.defer();
-			operation.resolve();
-			
-			return operation.promise;
+			return this.$http.patch(this.appConfig.apiEndpoint, { params: widget });
+		}
+
+		/** 
+		 * Converts HTTP operation promise to a generic promise.
+		 * It's not necessary to do. Instead IWidgetService should've used IHttpPromise<T> for return values.
+		 * @param httpPromise HTTP operation promise to convert.
+		 */        
+		private httpPromiseAsPromise = <T>(httpPromise: ng.IHttpPromise<T>): ng.IPromise<T> => {
+			var deferred = this.$q.defer();
+			httpPromise
+				.success(response => deferred.resolve(response))
+				.catch(reason => deferred.reject());
+
+			return deferred.promise;
 		}
 	}
-
+	
 	//	Register with application module.	
 	angular.module(appModuleName).service("widgetService", WidgetService);
 
