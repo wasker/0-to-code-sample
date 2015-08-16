@@ -1,6 +1,9 @@
 /// <reference path="../typings/angularjs/angular.d.ts" />
 /// <reference path="../typings/angular-ui-bootstrap/angular-ui-bootstrap.d.ts" />
 
+/// <reference path="widgetState.ts" />
+
+
 declare namespace WidgetRegistry {
 	/** Application module name. */
 	var appModuleName: string;
@@ -14,15 +17,6 @@ declare namespace WidgetRegistry {
 		templateRoot: string;
 	}
 
-	/** States of the widget. */	
-	enum WidgetState {
-		existing = 0,
-		new = 1,
-		deleting = 2,
-		deleted = 3,
-		undeleting = 4
-	}
-	
 	/** Widget data. */	
 	interface Widget {
 		/** Widget ID. */
