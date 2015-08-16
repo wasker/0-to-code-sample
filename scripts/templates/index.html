@@ -1,1 +1,43 @@
-hello world!
+<div class="alert alert-danger" ng-if="model.errorMessage">
+	{{model.errorMessage}}
+</div>
+
+<div class="table-responsive">
+
+	<table class="table table-striped">
+
+	  <thead>
+	    <tr>
+	      <th>ID</th>
+	      <th>Name</th>
+	      <th>Amount</th>
+	      <th>Description</th>
+	      <th>&nbsp;</th>
+	    </tr>
+	  </thead>
+
+	  <tbody>
+	    <tr ng-repeat="widget in model.widgets">
+			<td>{{widget.id}}</td>
+			<td>{{widget.name}}</td>
+			<td>{{widget.amount}}</td>
+			<td>{{widget.description}}</td>
+			<td>Edit&nbsp;|&nbsp;Delete</td>
+		</tr>
+	  </tbody>
+
+	</table>
+
+</div>
+
+<div class="row">
+
+	<div class="col-xs-12">
+
+		<button id="add-widget" 
+				ng-click="addWidget()" 
+				ng-disabled="model.operationInProgress">Add</button>
+
+	</div>
+	
+</div>

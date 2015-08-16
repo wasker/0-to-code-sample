@@ -14,6 +14,7 @@ namespace WidgetRegistry {
 		$stateProvider
 			.state("root", {
 				url: "/",
+				controller: "widgetManagerController",
 				templateUrl: getPathToTemplate(appConfig, "index.html")
 			});
 
