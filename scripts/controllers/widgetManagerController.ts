@@ -40,18 +40,24 @@ namespace WidgetRegistry {
 
 		/** Part of WidgetManagerScope. */		
 		private addWidget = (): void => {
+			alert("add");
 		}
 
 		/** Part of WidgetManagerScope. */		
 		private editWidget = (widget: Widget): void => {
+			alert("edit");
 		}
 
 		/** Part of WidgetManagerScope. */		
 		private deleteWidget = (widget: Widget): void => {
+			alert("delete");
+			widget.$state = WidgetState.deleted;
 		}
 
 		/** Part of WidgetManagerScope. */		
 		private undeleteWidget = (widget: Widget): void => {
+			alert("undelete");
+			widget.$state = WidgetState.existing;
 		}
 	}
 

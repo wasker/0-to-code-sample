@@ -17,13 +17,12 @@
 	  </thead>
 
 	  <tbody>
-	    <tr ng-repeat="widget in model.widgets">
-			<td>{{widget.id}}</td>
-			<td>{{widget.name}}</td>
-			<td>{{widget.amount}}</td>
-			<td>{{widget.description}}</td>
-			<td>Edit&nbsp;|&nbsp;Delete</td>
-		</tr>
+		<tr ng-repeat="widget in model.widgets" 
+			data-widget-line-item 
+			data-widget="widget"
+			data-on-edit-widget="editWidget(widget)" 
+			data-on-delete-widget="deleteWidget(widget)" 
+			data-on-undelete-widget="undeleteWidget(widget)"></tr>
 	  </tbody>
 
 	</table>

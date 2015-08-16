@@ -104,6 +104,24 @@ declare namespace WidgetRegistry {
 		*/		
 		undeleteWidget(widget: Widget): void;
 	}
+
+	/** Scope of the widget line item in the widget manager. */	
+	interface WidgetLineItemScope {
+		/** Model. */
+		model: Widget;
+	
+		/** Indicates whether the widget could be edited or deleted. */		
+		canEditOrDelete(widget: Widget): boolean;
+	
+		/** Indicates whether the widget is being deleted. */		
+		isDeleting(widget: Widget): boolean;
+	
+		/** Indicates whether the widget was deleted. */		
+		isDeleted(widget: Widget): boolean;
+	
+		/** Indicates whether the widget is being restored after it was deleted earlier. */		
+		isUndoingDelete(widget: Widget): boolean;
+	}
 }
 
 declare module angular {
