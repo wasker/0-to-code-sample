@@ -63,6 +63,23 @@ gulp.task("run-tests-backend", function (cb) {
   start("dnx . test", cb);
 });
 
+//  gulp watch-app
+gulp.task("watch-app", ["build-app"], function () {
+  gulp.watch(paths.appSources, ["compile-app"]);
+  gulp.watch(paths.styleSources, ["compile-styles"]);
+  gulp.watch(paths.templateFiles, ["copy-templates"]);
+});
+
+//  gulp watch-tests
+gulp.task("watch-tests", ["run-tests"], function (done) {
+  gulp.watch(paths.appSources, ["compile-app-run-tests"]);
+  gulp.watch(paths.testSources, ["run-tests"]);
+});
+
+gulp.task("compile-app-run-tests", ["compile-app"], function (done) {
+  runTests(done);
+});
+
 gulp.task("build-app", ["copy-templates", "compile-styles", "compile-app"], function () {
 });
 
