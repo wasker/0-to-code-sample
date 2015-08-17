@@ -1,0 +1,33 @@
+{
+	"version": "0.1.0",
+	"command": "gulp",
+	"args": [
+		"--gulpfile", 
+		"gulpfile.js"
+	],
+	"isShellCommand": true,
+	"tasks": [
+		{
+			"taskName": "watch-app",
+			// Make this the default build command.
+			"isBuildCommand": true,
+			// Show the output window only if unrecognized errors occur.
+			"showOutput": "silent",
+			// Task is running in watching mode.
+			"isWatching": true,
+			// Use the standard less compilation problem matcher.
+			"problemMatcher": ["$gulp-tsc", "$tsc"]
+		},
+		{
+			"taskName": "watch-tests",
+			// Make this the default test command.
+			"isTestCommand": true,
+			// Show the output window only if unrecognized errors occur.
+			"showOutput": "silent",
+			// Task is running in watching mode.
+			"isWatching": true,
+			// Use the standard less compilation problem matcher.
+			"problemMatcher": ["$gulp-tsc", "$tsc"]
+		}
+	]
+}
