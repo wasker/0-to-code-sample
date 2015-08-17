@@ -11,6 +11,8 @@ var gulp = require("gulp"),
   tsc = require("gulp-typescript"),
   sourcemaps = require("gulp-sourcemaps"),
   karma = require("karma").server,
+  minifyHtml = require("gulp-minify-html"),
+  templateCache = require("gulp-angular-templatecache"),
   project = require("./project.json");
 
 var paths = {
@@ -81,7 +83,12 @@ gulp.task("compile-app", function () {
 
 gulp.task("copy-templates", function () {
   gulp.src(paths.templateFiles)
-    .pipe(gulp.dest(paths.templatesOut));
+    .pipe(minifyHtml())
+    .pipe(templateCache("templates.js", {
+      root: "/templates",
+      module: "widgetRegistryData"                          //  Use data module, so app module would wait until templates are initialized.
+    }))
+    .pipe(gulp.dest(paths.appOut));
 });
 
 function runTests(doneCallback) {
