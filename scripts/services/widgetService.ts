@@ -20,22 +20,22 @@ namespace WidgetRegistry {
 
 		/** Part of IWidgetService. */
 		public createWidget = (widget: Widget): ng.IPromise<any> => {
-			return this.$http.put(this.appConfig.apiEndpoint, widget);
+			return this.httpPromiseAsPromise(this.$http.put(this.appConfig.apiEndpoint, widget));
 		}
 
 		/** Part of IWidgetService. */
 		public updateWidget = (widget: Widget): ng.IPromise<any> => {
-			return this.$http.post(this.appConfig.apiEndpoint, widget);
+			return this.httpPromiseAsPromise(this.$http.post(this.appConfig.apiEndpoint, widget));
 		}
 
 		/** Part of IWidgetService. */
 		public deleteWidget = (widget: Widget): ng.IPromise<any> => {
-			return this.$http.delete(this.appConfig.apiEndpoint, { params: widget });
+			return this.httpPromiseAsPromise(this.$http.delete(this.appConfig.apiEndpoint, { params: widget }));
 		}
 
 		/** Part of IWidgetService. */
 		public undoWidgetDelete = (widget: Widget): ng.IPromise<any> => {
-			return this.$http.patch(this.appConfig.apiEndpoint, { params: widget });
+			return this.httpPromiseAsPromise(this.$http.patch(this.appConfig.apiEndpoint, { params: widget }));
 		}
 
 		/** 
@@ -47,7 +47,7 @@ namespace WidgetRegistry {
 			var deferred = this.$q.defer();
 			httpPromise
 				.success(response => deferred.resolve(response))
-				.catch(reason => deferred.reject());
+				.error((data: any, status: number) => deferred.reject(status));
 
 			return deferred.promise;
 		}

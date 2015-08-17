@@ -27,6 +27,7 @@ wwwroot/lib/
 
 # Ignore compilation artifacts.
 wwwroot/js/
+wwwroot/tests/
 wwwroot/templates/
 
 # Visual Studio 2015 cache/options directory

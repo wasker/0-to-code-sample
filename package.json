@@ -8,6 +8,12 @@
     "gulp-uglify": "1.2.0",
     "rimraf": "2.2.8",
     "gulp-typescript": "2.8.0",
-    "gulp-sourcemaps": "1.5.2"
+    "gulp-sourcemaps": "1.5.2",
+    "karma": "0.13.9",
+    "karma-jasmine": "0.3.6",
+    "karma-phantomjs-launcher": "0.2.1",
+    "karma-coverage": "0.5.0",
+    "angular-mocks": "1.4.0",
+    "jasmine-jquery": "2.1.0"
   }
 }
