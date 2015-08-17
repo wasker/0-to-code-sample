@@ -20,8 +20,10 @@
   },
 
   "commands": {
-    "kestrel": "Microsoft.AspNet.Hosting --server Kestrel --config hosting.ini",
-    "web": "Microsoft.AspNet.Hosting --server Microsoft.AspNet.Server.WebListener --config hosting.ini",
+    "kestrel": "Microsoft.AspNet.Hosting --server Kestrel --config hosting.ini /ASPNET_ENV=Production",
+    "kestrel-dev": "Microsoft.AspNet.Hosting --server Kestrel --config hosting.ini /ASPNET_ENV=Development",
+    "web": "Microsoft.AspNet.Hosting --server Microsoft.AspNet.Server.WebListener --config hosting.ini /ASPNET_ENV=Production",
+    "web-dev": "Microsoft.AspNet.Hosting --server Microsoft.AspNet.Server.WebListener --config hosting.ini /ASPNET_ENV=Development",
     "test": "xunit.runner.dnx"
   },
 
