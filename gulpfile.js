@@ -14,6 +14,9 @@ var gulp = require("gulp"),
   karma = require("karma").server,
   minifyHtml = require("gulp-minify-html"),
   templateCache = require("gulp-angular-templatecache"),
+  del = require("del"),
+  start = require("gulp-start-process"),
+  runSequence = require("run-sequence"),
   project = require("./project.json");
 
 var paths = {
@@ -40,15 +43,32 @@ paths.minCss = paths.webroot + "css/**/*.min.css";
 paths.concatJsDest = paths.webroot + "js/site.min.js";
 paths.concatCssDest = paths.webroot + "css/site.min.css";
 
-gulp.task("clean:js", function(cb) {
-  rimraf(paths.concatJsDest, cb);
+//  gulp clean
+gulp.task("clean", function (cb) {
+  del([paths.appOut, paths.testsOut, paths.templatesOut, paths.stylesOut], cb);
 });
 
-gulp.task("clean:css", function(cb) {
-  rimraf(paths.concatCssDest, cb);
+//  gulp build
+gulp.task("build", function (cb) {
+  runSequence("clean", ["build-backend", "build-app"], ["run-tests", "run-tests-backend"]);
 });
 
-gulp.task("clean", ["clean:js", "clean:css"]);
+//  gulp run-tests
+gulp.task("run-tests", ["build-tests"], function (done) {
+  runTests(done);
+});
+
+//  gulp run-tests-backend
+gulp.task("run-tests-backend", function (cb) {
+  start("dnx . test", cb);
+});
+
+gulp.task("build-app", ["copy-templates", "compile-styles", "compile-app"], function () {
+});
+
+gulp.task("build-backend", function (cb) {
+  start("dnu build", cb);
+});
 
 gulp.task("min:js", function() {
   gulp.src([paths.js, "!" + paths.minJs], {
@@ -78,7 +98,7 @@ gulp.task("compile-app", function () {
                       noEmitOnError: true,
                       noExternalResolve: true,
                       out: "app.js"
-                    }));  
+                    }));
 
   return tscResult.js
           .pipe(sourcemaps.write("maps/"))                  //  Relative to appOut.
@@ -113,11 +133,6 @@ function runTests(doneCallback) {
   }, doneCallback);
 }
 
-//  gulp run-tests
-gulp.task("run-tests", ["build-tests"], function (done) {
-  runTests(done);
-});
-
 gulp.task("build-tests", function () {
   var tscResult = gulp.src([paths.testSources, paths.appScripts + "widgetState.ts", paths.appScripts + "**/*.d.ts", paths.typings + "**/*.d.ts"])
                     .pipe(sourcemaps.init())
@@ -127,7 +142,7 @@ gulp.task("build-tests", function () {
                       noImplicitAny: true,
                       noEmitOnError: true,
                       noExternalResolve: true
-                    }));  
+                    }));
 
   return tscResult.js
           .pipe(sourcemaps.write("maps/"))                  //  Relative to testsOut.

@@ -29,6 +29,7 @@ wwwroot/lib/
 wwwroot/js/
 wwwroot/tests/
 wwwroot/templates/
+wwwroot/css/
 
 # Visual Studio 2015 cache/options directory
 .vs/
