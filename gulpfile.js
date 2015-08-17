@@ -10,6 +10,7 @@ var gulp = require("gulp"),
   uglify = require("gulp-uglify"),
   tsc = require("gulp-typescript"),
   sourcemaps = require("gulp-sourcemaps"),
+  sass = require("gulp-sass"),
   karma = require("karma").server,
   minifyHtml = require("gulp-minify-html"),
   templateCache = require("gulp-angular-templatecache"),
@@ -20,7 +21,8 @@ var paths = {
   appScripts: "./scripts/",
   appTests: "./tests/frontend/",
   templates: "./scripts/templates/",
-  typings: "./typings/"
+  typings: "./typings/",
+  appStyles: "./styles/"
 };
 
 paths.appOut = paths.webroot + "js/";
@@ -29,6 +31,8 @@ paths.testsOut = paths.webroot + "/tests/"
 paths.testSources = paths.appTests + "**/*.ts";
 paths.templatesOut = paths.webroot + "templates/";
 paths.templateFiles = paths.templates + "**/*.html";
+paths.styleSources = paths.appStyles + "**/*.scss";
+paths.stylesOut = project.webroot + "/css/";
 paths.js = paths.appOut + "**/*.js";
 paths.minJs = paths.webroot + "js/**/*.min.js";
 paths.css = paths.webroot + "css/**/*.css";
@@ -89,6 +93,17 @@ gulp.task("copy-templates", function () {
       module: "widgetRegistryData"                          //  Use data module, so app module would wait until templates are initialized.
     }))
     .pipe(gulp.dest(paths.appOut));
+});
+
+gulp.task("compile-styles", function () {
+  gulp.src(paths.styleSources)
+    .pipe(sourcemaps.init())
+    .pipe(sass({
+      includePaths: [],                                     //  Populate with paths to included files.
+      outputStyle: "compressed"
+    }))
+    .pipe(sourcemaps.write("maps/"))                        //  Relative to stylesOut.
+    .pipe(gulp.dest(paths.stylesOut));
 });
 
 function runTests(doneCallback) {
