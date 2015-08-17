@@ -36,12 +36,6 @@ paths.templatesOut = paths.webroot + "templates/";
 paths.templateFiles = paths.templates + "**/*.html";
 paths.styleSources = paths.appStyles + "**/*.scss";
 paths.stylesOut = project.webroot + "/css/";
-paths.js = paths.appOut + "**/*.js";
-paths.minJs = paths.webroot + "js/**/*.min.js";
-paths.css = paths.webroot + "css/**/*.css";
-paths.minCss = paths.webroot + "css/**/*.min.css";
-paths.concatJsDest = paths.webroot + "js/site.min.js";
-paths.concatCssDest = paths.webroot + "css/site.min.css";
 
 //  gulp clean
 gulp.task("clean", function (cb) {
@@ -50,7 +44,7 @@ gulp.task("clean", function (cb) {
 
 //  gulp build
 gulp.task("build", function (cb) {
-  runSequence("clean", ["build-backend", "build-app"], ["run-tests", "run-tests-backend"]);
+  runSequence("clean", ["build-backend", "build-app"], ["run-tests", "run-tests-backend"], "min:js");
 });
 
 //  gulp run-tests
@@ -88,10 +82,10 @@ gulp.task("build-backend", function (cb) {
 });
 
 gulp.task("min:js", function() {
-  gulp.src([paths.js, "!" + paths.minJs], {
+  gulp.src([paths.appOut + "templates.js", paths.appOut + "app.js"], {
       base: "."
     })
-    .pipe(concat(paths.concatJsDest))
+    .pipe(concat(paths.appOut + "app.min.js"))
     .pipe(uglify())
     .pipe(gulp.dest("."));
 });

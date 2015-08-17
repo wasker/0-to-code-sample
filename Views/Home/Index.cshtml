@@ -4,6 +4,7 @@
 
 @section scripts 
 {
+
 <script type="text/javascript">
 
 	var appData = angular.module("widgetRegistryData", []);
@@ -16,8 +17,14 @@
 
 </script>
 
-<script src="~/js/templates.js"></script>
-<script src="~/js/app.js"></script>
+<environment names="Development">
+    <script src="~/js/templates.js"></script>
+    <script src="~/js/app.js"></script>
+</environment>
+<environment names="Staging,Production">
+    <script src="~/js/app.min.js"></script>
+</environment>
+
 }
 
 <div ui-view></div>
