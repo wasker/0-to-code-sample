@@ -18,6 +18,7 @@ module.exports = function(config) {
       "./wwwroot/tests/tests/**/*.js"
     ],
     exclude: [
+      "./wwwroot/js/app.min.js",
       "./wwwroot/js/templates.js",
     ],
 
