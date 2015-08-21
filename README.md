@@ -1,1 +1,1 @@
-# 0-to-code-sample
+This repository contains all stages of AngularJS application development with TypeScript and Visual Studio Code, as described in [the accompanying article](http://wasker.github.io/articles/2015-08-20-angularjs-typescript-visual-studio-code/).
