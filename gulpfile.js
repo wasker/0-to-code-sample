@@ -53,7 +53,7 @@ gulp.task("run-tests", ["build-tests"], function (done) {
 
 //  gulp run-tests-backend
 gulp.task("run-tests-backend", function (cb) {
-  start("dnx . test", cb);
+  start("dnx test", cb);
 });
 
 //  gulp watch-app
