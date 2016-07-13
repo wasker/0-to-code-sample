@@ -104,7 +104,7 @@ describe("widgetManagerController", function() {
 
 		var deferred = controller.promises.defer();		
 		spyOn(controller.modal, "open").and.callFake((settings: angular.ui.bootstrap.IModalSettings) => {
-			var widget = <WidgetRegistry.Widget>settings.resolve.model().widget;
+			var widget = <WidgetRegistry.Widget>(<any>settings.resolve).model().widget;
 			widget.name = "changed";
             
 			return { result: deferred.promise };
@@ -127,7 +127,7 @@ describe("widgetManagerController", function() {
 
 		var deferred = controller.promises.defer();		
 		spyOn(controller.modal, "open").and.callFake((settings: angular.ui.bootstrap.IModalSettings) => {
-			var widget = <WidgetRegistry.Widget>settings.resolve.model().widget;
+			var widget = <WidgetRegistry.Widget>(<any>settings.resolve).model().widget;
 			widget.name = "changed";
             
 			return { result: deferred.promise };

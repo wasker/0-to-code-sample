@@ -1,11 +1,22 @@
-// Type definitions for Angular UI Bootstrap 0.13.2
+// Type definitions for Angular UI Bootstrap 0.13.3
 // Project: https://github.com/angular-ui/bootstrap
 // Definitions by: Brian Surowiec <https://github.com/xt0rted>
-// Definitions: https://github.com/borisyankov/DefinitelyTyped
+// Definitions: https://github.com/DefinitelyTyped/DefinitelyTyped
 
 /// <reference path="../angularjs/angular.d.ts" />
 
-declare module angular.ui.bootstrap {
+// Support for AMD require
+declare module 'angular-bootstrap' {
+    let _: string;
+    export = _;
+}
+
+declare module 'angular-ui-bootstrap' {
+    let _: string;
+    export = _;
+}
+
+declare namespace angular.ui.bootstrap {
 
     interface IAccordionConfig {
         /**
@@ -36,42 +47,63 @@ declare module angular.ui.bootstrap {
          *
          * @default 'dd'
          */
-        dayFormat?: string;
+        formatDay?: string;
 
         /**
          * Format of month in year.
          *
          * @default 'MMM'
          */
-        monthFormat?: string;
+        formatMonth?: string;
 
         /**
          * Format of year in year range.
          *
          * @default 'yyyy'
          */
-        yearFormat?: string;
+        formatYear?: string;
 
         /**
          * Format of day in week header.
          *
          * @default 'EEE'
          */
-        dayHeaderFormat?: string;
+        formatDayHeader?: string;
 
         /**
          * Format of title when selecting day.
          *
          * @default 'MMM yyyy'
          */
-        dayTitleFormat?: string;
+        formatDayTitle?: string;
 
         /**
          * Format of title when selecting month.
          *
          * @default 'yyyy'
          */
-        monthTitleFormat?: string;
+        formatMonthTitle?: string;
+
+        /**
+         * Current mode of the datepicker (day|month|year). Can be used to initialize datepicker to specific mode.
+         *
+         * @default 'day'
+         */
+        datepickerMode?: string;
+
+        /**
+         * Set a lower limit for mode.
+         *
+         * @default 'day'
+         */
+        minMode?: string;
+
+        /**
+         * Set an upper limit for mode.
+         *
+         * @default 'year'
+         */
+        maxMode?: string;
 
         /**
          * Whether to display week numbers.
@@ -122,7 +154,30 @@ declare module angular.ui.bootstrap {
          *
          * @default 'yyyy-MM-dd'
          */
-        dateFormat?: string;
+        datepickerPopup?: string;
+
+        /**
+         * Allows overriding of default template of the popup.
+         *
+         * @default 'template/datepicker/popup.html'
+         */
+        datepickerPopupTemplateUrl?: string;
+
+        /**
+         * Allows overriding of default template of the datepicker used in popup.
+         *
+         * @default 'template/datepicker/popup.html'
+         */
+        datepickerTemplateUrl?: string;
+
+        /**
+         * Allows overriding of the default format for html5 date inputs.
+         */
+        html5Types?: {
+            date?: string;
+            'datetime-local'?: string;
+            month?: string;
+        };
 
         /**
          * The text to display for the current day button.
@@ -130,13 +185,6 @@ declare module angular.ui.bootstrap {
          * @default 'Today'
          */
         currentText?: string;
-
-        /**
-         * The text to display for the toggling week numbers button.
-         *
-         * @default 'Weeks'
-         */
-        toggleWeeksText?: string;
 
         /**
          * The text to display for the clear button.
@@ -172,6 +220,13 @@ declare module angular.ui.bootstrap {
          * @default true
          */
         showButtonBar?: boolean;
+
+        /**
+         * Whether to focus the datepicker popup upon opening.
+         *
+         * @default true
+         */
+        onOpenFocus?: boolean;
     }
 
 
@@ -215,6 +270,11 @@ declare module angular.ui.bootstrap {
          * A promise that is resolved when a modal is rendered.
          */
         rendered: angular.IPromise<any>;
+
+        /**
+         * A promise that is resolved when a modal is closed and the animation completes.
+         */
+        closed: angular.IPromise<any>;
     }
 
     interface IModalScope extends angular.IScope {
@@ -253,8 +313,9 @@ declare module angular.ui.bootstrap {
         /**
          * a controller for a modal instance - it can initialize scope used by modal.
          * A controller can be injected with `$modalInstance`
+         * If value is an array, it must be in Inline Array Annotation format for injection (strings followed by factory method)
          */
-        controller?: any;
+        controller?: string | Function | Array<string | Function>;
 
         /**
          *  an alternative to the controller-as syntax, matching the API of directive definitions.
@@ -271,8 +332,9 @@ declare module angular.ui.bootstrap {
 
         /**
          * members that will be resolved and passed to the controller as locals; it is equivalent of the `resolve` property for AngularJS routes
+         * If property value is an array, it must be in Inline Array Annotation format for injection (strings followed by factory method)
          */
-        resolve?: any;
+        resolve?: { [ key: string ]: string | Function | Array<string | Function> | Object };
 
         /**
          * Set to false to disable animations on new modal/backdrop. Does not toggle animations for modals/backdrops that are already displayed.
@@ -318,6 +380,26 @@ declare module angular.ui.bootstrap {
          * a path to a template overriding modal's window template
          */
         windowTemplateUrl?: string;
+
+        /**
+         * The  class added to the body element when the modal is opened.
+         *
+         * @default 'model-open'
+         */
+        openedClass?: string;
+        
+        /**
+         * CSS class(es) to be added to the top modal window.
+         */
+        
+        windowTopClass?: string;
+        
+        /**
+         * Appends the modal to a specific element.
+         * 
+         * @default 'body'
+         */
+        appendTo?: angular.IAugmentedJQuery;
     }
 
     interface IModalStackService {
@@ -355,11 +437,6 @@ declare module angular.ui.bootstrap {
 
     interface IPaginationConfig {
         /**
-         * Current page number. First page is 1.
-         */
-        page?: number;
-
-        /**
          * Total number of items in all pages.
          */
         totalItems?: number;
@@ -391,13 +468,6 @@ declare module angular.ui.bootstrap {
          * @default true
          */
         rotate?: boolean;
-
-        /**
-         * An optional expression called when a page is selected having the page number as argument.
-         *
-         * @default null
-         */
-        onSelectPage?(page: number): void;
 
         /**
          * Whether to display Previous / Next buttons.
@@ -440,6 +510,13 @@ declare module angular.ui.bootstrap {
          * @default 'Last'
          */
         lastText?: string;
+
+        /**
+         * Override the template for the component with a custom provided template.
+         *
+         * @default  'template/pagination/pagination.html'
+         */
+        templateUrl?: string;
     }
 
     interface IPagerConfig {
@@ -451,35 +528,11 @@ declare module angular.ui.bootstrap {
         align?: boolean;
 
         /**
-         * Current page number. First page is 1.
-         */
-        page?: number;
-
-        /**
-         * Total number of items in all pages.
-         */
-        totalItems?: number;
-
-        /**
          * Maximum number of items per page. A value less than one indicates all items on one page.
          *
          * @default 10
          */
         itemsPerPage?: number;
-
-        /**
-         * An optional expression assigned the total number of pages to display.
-         *
-         * @default angular.noop
-         */
-        numPages?: number;
-
-        /**
-         * An optional expression called when a page is selected having the page number as argument.
-         *
-         * @default null
-         */
-        onSelectPage?(page: number): void;
 
         /**
          * Text for Previous button.
@@ -654,7 +707,7 @@ declare module angular.ui.bootstrap {
         appendToBody?: boolean;
 
         /**
-         * Determines the default open triggers for tooltips and popovers
+         * What should trigger a show of the tooltip? Supports a space separated list of event names.
          *
          * @default 'mouseenter' for tooltip, 'click' for popover
          */
