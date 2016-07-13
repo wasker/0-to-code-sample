@@ -103,6 +103,11 @@ gulp.task("compile-app", function () {
                     .pipe(sourcemaps.init())
                     .pipe(tsc({
                       target: "ES5",
+                      module: "commonjs",
+                      moduleResolution: "node",
+                      sourceMap: true,
+                      emitDecoratorMetadata: true,
+                      experimentalDecorators: true,
                       removeComments: true,
                       noImplicitAny: true,
                       noEmitOnError: true,
