@@ -15,13 +15,16 @@
       "commit": "de82425735f84a10b43921ae4b1d085b3752a626"
     },
     "jquery/jquery.d.ts": {
-      "commit": "de82425735f84a10b43921ae4b1d085b3752a626"
+      "commit": "a59cec35c61820b421d31ae91f9f02cad41ed197"
     },
     "jasmine-jquery/jasmine-jquery.d.ts": {
       "commit": "de82425735f84a10b43921ae4b1d085b3752a626"
     },
     "jasmine/jasmine.d.ts": {
       "commit": "de82425735f84a10b43921ae4b1d085b3752a626"
+    },
+    "bootstrap/bootstrap.d.ts": {
+      "commit": "a59cec35c61820b421d31ae91f9f02cad41ed197"
     }
   }
 }

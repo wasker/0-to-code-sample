@@ -17,6 +17,12 @@ textarea {
     max-width: 280px;
 }
 
+tr.deleted {
+    td:not(:last-child) {
+        text-decoration: line-through;
+    }
+}
+
 /* Carousel */
 .carousel-caption {
     z-index: 10 !important;

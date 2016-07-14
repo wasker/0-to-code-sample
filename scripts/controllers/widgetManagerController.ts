@@ -3,41 +3,36 @@
 namespace WidgetRegistry {
 
 	/** Widget manager controller. */	
-	export class WidgetManagerController {
+	class WidgetManagerController implements ng.IComponentController {
 		/** Dependencies. */
-		public static $inject = ["appConfig", "$scope", "widgetService", "$modal"];
+		public static $inject = ["appConfig", "widgetService", "$q"];
 
 		constructor(
 			private appConfig: AppConfig,
-			private $scope: WidgetManagerScope,
 			private widgetService: IWidgetService,
-			private $modal: ng.ui.bootstrap.IModalService) {
+			private $promise: ng.IQService) {
 
-			$scope.model = {
-				widgets: [],
-				operationInProgress: false
-			};
-			$scope.addWidget = this.addWidget;
-			$scope.editWidget = this.editWidget;
-			$scope.deleteWidget = this.deleteWidget;
-			$scope.undeleteWidget = this.undeleteWidget;
+		}
 
+		/** Part of ng.IComponentController. */		
+		public $onInit = (): void => {
 			this.performOperation(this.widgetService.getWidgets()
-				.then((widgets: WidgetList) => this.$scope.model.widgets = widgets)
-				.catch(() => this.$scope.model.errorMessage = "Cannot get list of widgets. Please try again later."));
+				.then((widgets: WidgetList) => this.model.widgets = widgets)
+				.catch(() => this.model.errorMessage = "Cannot get list of widgets. Please try again later."));
 		}
 
-		/** Wraps an operation with operationInProgress indicator. */		
-		private performOperation = (operationPromise: ng.IPromise<any>): void => {
-			this.$scope.model.operationInProgress = true;
-			this.$scope.model.errorMessage = "";
+		/** Widget manager model. */
+		public model: WidgetManagerModel = {
+			widgets: [],
+			operationInProgress: false
+		};
 
-			operationPromise.finally(() => this.$scope.model.operationInProgress = false);
-		}
+		/** Model for widget editor. */		
+		public editWidgetModel: WidgetEditorModel;
 
-		/** Part of WidgetManagerScope. */		
-		private addWidget = (): void => {
-			var widget: Widget = {
+		/** Initiates operation of adding a new widget. */		
+		public addWidget = (): void => {
+			let widget: Widget = {
 				$state: WidgetState.new,
 				id: (Math.random() * 100).toFixed(0),
 				name: "",
@@ -46,22 +41,28 @@ namespace WidgetRegistry {
 			};
 		
 			this.editWidgetImpl(widget, this.widgetService.createWidget).then(() => {
-				this.$scope.model.widgets.push(widget);
+				this.model.widgets.push(widget);
 			});	
 		}
 		
-		/** Part of WidgetManagerScope. */		
-		private editWidget = (widget: Widget): void => {
-			var selectedWidget = angular.copy(widget);
+		/** 
+		* Edits widget.
+		* @param widget Widget to be edited.
+		*/		
+		public editWidget = (widget: Widget): void => {
+			let selectedWidget = angular.copy(widget);
 		
 			this.editWidgetImpl(selectedWidget, this.widgetService.updateWidget).then(() => {
 				angular.copy(selectedWidget, widget);
 			});	
 		}
 
-		/** Part of WidgetManagerScope. */		
-		private deleteWidget = (widget: Widget): void => {
-			var widgetWasNew = (widget.$state && WidgetState.new == widget.$state);
+		/** 
+		* Deletes widget.
+		* @param widget Widget to be deleted.
+		*/		
+		public deleteWidget = (widget: Widget): void => {
+			let widgetWasNew = (widget.$state && WidgetState.new == widget.$state);
 			widget.$state = WidgetState.deleting;
 
 			this.performOperation(
@@ -69,9 +70,9 @@ namespace WidgetRegistry {
 					.then(() => {
 						if (widgetWasNew) {
 							//	Delete newly created widgets.
-							var idx = this.$scope.model.widgets.indexOf(widget);
+							let idx = this.model.widgets.indexOf(widget);
 							if (idx > -1) {
-								this.$scope.model.widgets.splice(idx, 1);
+								this.model.widgets.splice(idx, 1);
 							}
 						}
 						else {
@@ -81,12 +82,15 @@ namespace WidgetRegistry {
 					})
 					.catch(() => {
 						widget.$state = (widgetWasNew) ? WidgetState.new : WidgetState.existing;
-						this.$scope.model.errorMessage = "Cannot delete widget. Please try again later.";
+						this.model.errorMessage = "Cannot delete widget. Please try again later.";
 					}));
 		}
 
-		/** Part of WidgetManagerScope. */		
-		private undeleteWidget = (widget: Widget): void => {
+		/** 
+		* Restores widget that was deleted.
+		* @param widget Widget to be restored.
+		*/		
+		public undeleteWidget = (widget: Widget): void => {
 			widget.$state = WidgetState.undeleting;
 
 			this.performOperation(
@@ -96,28 +100,50 @@ namespace WidgetRegistry {
 					})
 					.catch(() => {
 						widget.$state = WidgetState.deleted;
-						this.$scope.model.errorMessage = "Cannot restore deleted widget. Please try again later.";
+						this.model.errorMessage = "Cannot restore deleted widget. Please try again later.";
 					}));
+		}
+
+		/** Wraps an operation with operationInProgress indicator. */		
+		private performOperation = (operationPromise: ng.IPromise<any>): void => {
+			this.model.operationInProgress = true;
+			this.model.errorMessage = "";
+
+			operationPromise.finally(() => this.model.operationInProgress = false);
 		}
 		
 		/** Invokes widget editor. */		
 		private editWidgetImpl = (widget: Widget, callback: WidgetOperationCallback): ng.IPromise<any> => {
-			return this.$modal.open({
-				resolve: {
-					model: (): WidgetEditorModel => {
-						return {
-							widget: widget,
-							performWidgetOperation: callback
-						};
-					}
-				},
-				templateUrl: this.$scope.pathToTemplate("widgetEditor.html"),
-				controller: "widgetEditorController"
-			}).result;	
+			let deferred = this.$promise.defer();
+
+			this.editWidgetModel = {
+				widget,
+				deferred,
+				performWidgetOperation: callback
+			};
+
+			let modalHost = angular.element("#widgetEditorHost");			
+
+			let promise = deferred.promise;
+			promise.finally(() => {
+				modalHost.modal("hide");
+				delete this.editWidgetModel;
+			});
+			
+			modalHost.modal({
+				show: true,
+				keyboard: false,
+				backdrop: "static"
+			});
+
+			return promise;
 		}
 	}
 
 	//	Register with application module.	
-	angular.module(appModuleName).controller("widgetManagerController", WidgetManagerController);
+	angular.module(appModuleName).component("widgetManager", {
+		templateUrl: "/templates/widgetManager.html",	// TODO
+		controller: WidgetManagerController
+	});
 
 }

@@ -1,0 +1,43 @@
+<div class="table-responsive">
+	<table class="table {{$ctrl.tableClass}}">
+
+		<thead>
+			<tr>
+				<th>ID</th>
+				<th>Name</th>
+				<th>Amount</th>
+				<th>Description</th>
+				<th>&nbsp;</th>
+			</tr>
+		</thead>
+
+		<tbody>
+			<tr ng-repeat="widget in $ctrl.model"
+				ng-class="{deleted: $ctrl.isDeleted(widget) || $ctrl.isUndoingDelete(widget) }">
+
+				<td>{{widget.id}}</td>
+				<td>{{widget.name}}</td>
+				<td>{{widget.amount}}</td>
+				<td>{{widget.description}}</td>
+				<td>
+					<span ng-if="$ctrl.canEditOrDelete(widget)">
+						<a href="#" ng-click="$ctrl.onEditWidget({ widget: widget })">Edit</a>
+						&nbsp;|&nbsp;
+						<a href="#" ng-click="$ctrl.onDeleteWidget({ widget: widget })">Delete</a>
+					</span>
+					<span ng-if="$ctrl.isDeleting(widget)">
+						deleting...
+					</span>
+					<span ng-if="$ctrl.isUndoingDelete(widget)">
+						restoring...
+					</span>
+					<span ng-if="$ctrl.isDeleted(widget)">
+						<a href="#" ng-click="$ctrl.onUndeleteWidget({ widget: widget })">Undo</a>
+					</span>
+				</td>
+
+			</tr>
+		</tbody>
+
+	</table>
+</div>

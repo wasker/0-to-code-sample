@@ -68,47 +68,25 @@ declare namespace WidgetRegistry {
 	}
 
 	type EventCallback = (e?: ng.IAngularEvent) => void;
-	
-	/** Scope of the widget manager. */	
-	interface WidgetManagerScope extends ng.IScope {
-		/** Widget manager model. */
-		model: {
-			/** List of widgets. */
-			widgets: WidgetList;
-	
-			/** Indicates whether the operation is in progress. */		
-			operationInProgress: boolean;
-	
-			/** If operation results in an error, contains a message. */
-			errorMessage?: string;			
-		}
-	
-		/** Initiates operation of adding a new widget. */		
-		addWidget: EventCallback;		
-	
-		/** 
-		* Edits widget.
-		* @param widget Widget to be edited.
-		*/		
-		editWidget(widget: Widget): void;
-	
-		/** 
-		* Deletes widget.
-		* @param widget Widget to be deleted.
-		*/		
-		deleteWidget(widget: Widget): void;
-	
-		/** 
-		* Restores widget that was deleted.
-		* @param widget Widget to be restored.
-		*/		
-		undeleteWidget(widget: Widget): void;
+
+	interface WidgetManagerModel {
+		/** List of widgets. */
+		widgets: WidgetList;
+
+		/** Indicates whether the operation is in progress. */		
+		operationInProgress: boolean;
+
+		/** If operation results in an error, contains a message. */
+		errorMessage?: string;			
 	}
 
-	/** Scope of the widget line item in the widget manager. */	
-	interface WidgetLineItemScope {
+	/** Scope of the widget table component in the widget manager. */	
+	interface WidgetTableScope {
 		/** Model. */
-		model: Widget;
+		model: WidgetList,
+
+		/** Additional table classes. */		
+		tableClass?: string,
 	
 		/** Indicates whether the widget could be edited or deleted. */		
 		canEditOrDelete(widget: Widget): boolean;
@@ -132,6 +110,8 @@ declare namespace WidgetRegistry {
 	
 		/** Callback to perform widget operation when user commits changes in the editor. */		
 		performWidgetOperation: WidgetOperationCallback;
+
+		deferred: ng.IDeferred<any>;
 		
 		/** Indicates whether the data is valid. */		
 		isValid?: boolean;
@@ -141,18 +121,6 @@ declare namespace WidgetRegistry {
 	
 		/** If operation results in an error, contains a message. */
 		errorMessage?: string;			
-	}
-	
-	/** Scope of the widget editor. */	
-	interface WidgetEditorScope extends ng.IScope{
-		/** Widget editor model. */
-		model: WidgetEditorModel;
-	
-		/** Occurs when user clicks OK button. */		
-		ok(): void;
-	
-		/** Occurs when user clicks Cancel button. */		
-		cancel(): void;
 	}
 }
 

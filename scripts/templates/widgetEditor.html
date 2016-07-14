@@ -1,5 +1,5 @@
 <div class="alert alert-danger" ng-if="model.errorMessage">
-	{{model.errorMessage}}
+	{{$ctrl.model.errorMessage}}
 </div>
 
 <form>
@@ -10,30 +10,30 @@
 
 	<div class="modal-body">
 
-	  <div class="form-group" ng-if="!model.isValid">
+	  <div class="form-group" ng-if="!$ctrl.model.isValid">
 		  <span class="text-danger">Please check your input.</span>
 	  </div>
 
 	  <div class="form-group">
 	    <label for="widget-name">Name:</label>
-	    <input type="text" class="form-control" id="widget-name" placeholder="Widget name" ng-model="model.widget.name">
+	    <input type="text" class="form-control" id="widget-name" placeholder="Widget name" ng-model="$ctrl.model.widget.name">
 	  </div>
 
 	  <div class="form-group">
 	    <label for="widget-amount">Amount:</label>
-	    <input type="range" class="form-control" id="widget-amount" min="0" max="1000" step="50" ng-model="model.widget.amount">
+	    <input type="range" class="form-control" id="widget-amount" min="0" max="1000" step="50" ng-model="$ctrl.model.widget.amount">
 	  </div>
 
 	  <div class="form-group">
 	    <label for="widget-description">Description:</label>
-	    <textarea class="form-control" id="widget-description" rows="5" ng-model="model.widget.description"></textarea>
+	    <textarea class="form-control" id="widget-description" rows="5" ng-model="$ctrl.model.widget.description"></textarea>
 	  </div>
 
 	</div>
 
 	<div class="modal-footer">
-	    <button type="submit" class="btn btn-default" ng-click="ok()">OK</button>
-	    <button class="btn" ng-click="cancel()">Cancel</button>
+	    <button type="submit" class="btn btn-default" ng-click="$ctrl.ok()">OK</button>
+	    <button class="btn" ng-click="$ctrl.cancel()">Cancel</button>
 	</div>
 
 </form>

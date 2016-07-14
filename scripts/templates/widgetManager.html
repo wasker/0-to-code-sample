@@ -1,0 +1,31 @@
+<div class="alert alert-danger" ng-if="$ctrl.model.errorMessage">
+	{{$ctrl.model.errorMessage}}
+</div>
+
+<widget-table data-widgets="$ctrl.model.widgets"
+							data-table-class="table-striped"
+							data-on-edit-widget="$ctrl.editWidget(widget)" 
+							data-on-delete-widget="$ctrl.deleteWidget(widget)" 
+							data-on-undelete-widget="$ctrl.undeleteWidget(widget)"></widget-table>
+
+<div class="row">
+
+	<div class="col-xs-12">
+
+		<button id="add-widget" 
+				ng-click="$ctrl.addWidget()" 
+				ng-disabled="$ctrl.model.operationInProgress">Add</button>
+
+	</div>
+	
+</div>
+
+<div id="widgetEditorHost" class="modal">
+	<div class="modal-dialog">
+		<div class="modal-content">
+
+			<widget-editor data-model="$ctrl.editWidgetModel" ng-if="$ctrl.editWidgetModel"></widget-editor>
+
+		</div>
+	</div>
+</div>

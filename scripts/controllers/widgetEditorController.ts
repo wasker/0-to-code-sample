@@ -3,51 +3,59 @@
 namespace WidgetRegistry {
 
 	/** Widget editor controller. */
-	export class WidgetEditorController {
+	class WidgetEditorController implements ng.IComponentController {
 		/** Dependencies. */
-		public static $inject = ["model", "appConfig", "$scope", "$modalInstance"];
+		public static $inject = ["appConfig"];
 
 		constructor(
-			model: WidgetEditorModel,
-			private appConfig: AppConfig,
-			private $scope: WidgetEditorScope,
-			private $modalInstance: ng.ui.bootstrap.IModalServiceInstance) {
+			private appConfig: AppConfig) {
 
-			$scope.model = model;
-			$scope.model.isValid = true;
-			$scope.model.operationInProgress = false;
-			$scope.ok = this.ok;
-			$scope.cancel = () => $modalInstance.dismiss();
 		}
 
-		/** Part of WidgetEditorScope. */		
-		private ok = (): void => {
+		/** Part of ng.IComponentController. */		
+		public $onInit = (): void => {
+			this.model.isValid = true;
+			this.model.operationInProgress = false;
+		}
+
+		/** Widget editor model. */
+		public model: WidgetEditorModel;
+
+		/** Occurs when user clicks OK button. */		
+		public ok = (): void => {
 			if (!this.isValid()) {
-				this.$scope.model.isValid = false;
+				this.model.isValid = false;
 				return;
 			}
-			this.$scope.model.isValid = true;
+			this.model.isValid = true;
 
 			this.performOperation(
-				this.$scope.model.performWidgetOperation(this.$scope.model.widget)
-					.then(() => this.$modalInstance.close())
-					.catch(() => this.$scope.model.errorMessage = "We cannot save your changes now. Please try again later."));
+				this.model.performWidgetOperation(this.model.widget)
+					.then(this.model.deferred.resolve)
+					.catch(() => this.model.errorMessage = "We cannot save your changes now. Please try again later."));
 		}
 
-		/** Part of WidgetEditorScope. */		
-		private isValid = (): boolean => {
-			return !!this.$scope.model.widget.name;
-		}
+		/** Occurs when user clicks Cancel button. */		
+		public cancel = () => this.model.deferred.reject();
+
+		/** Indicates whether the model is valid. */		
+		public isValid = (): boolean => !!this.model.widget.name;
 
 		/** Wraps an operation with operationInProgress indicator. */		
 		private performOperation = (operationPromise: ng.IPromise<any>): void => {
-			this.$scope.model.operationInProgress = true;
-			this.$scope.model.errorMessage = "";
+			this.model.operationInProgress = true;
+			this.model.errorMessage = "";
 
-			operationPromise.finally(() => this.$scope.model.operationInProgress = false);
+			operationPromise.finally(() => this.model.operationInProgress = false);
 		}
 	}
 
 	//	Register with application module.	
-	angular.module(appModuleName).controller("widgetEditorController", WidgetEditorController);
+	angular.module(appModuleName).component("widgetEditor", {
+		templateUrl: "/templates/widgetEditor.html",	// TODO
+		bindings: {
+			model: "="
+		},
+		controller: WidgetEditorController
+	});
 }
