@@ -101,25 +101,17 @@ gulp.task("min:css", function() {
 gulp.task("min", ["min:js", "min:css"]);
 
 gulp.task("compile-app", function () {
-  var tscResult = gulp.src([paths.appSources, paths.typings + "**/*.d.ts"])
-                    .pipe(sourcemaps.init())
-                    .pipe(tsc({
-                      target: "ES5",
-                      module: "commonjs",
-                      moduleResolution: "node",
-                      sourceMap: true,
-                      emitDecoratorMetadata: true,
-                      experimentalDecorators: true,
-                      removeComments: true,
-                      noImplicitAny: true,
-                      noEmitOnError: true,
-                      noExternalResolve: true,
-                      out: "app.js"
-                    }));
+  var tscProject = tsc.createProject("tsconfig.json", {
+      rootDir: "./scripts/",
+      outDir: paths.appOut   
+  });
+  var tscResult = tscProject.src()
+      .pipe(sourcemaps.init())
+      .pipe(tsc(tscProject));
 
   return tscResult.js
-          .pipe(sourcemaps.write("maps/"))                  //  Relative to appOut.
-          .pipe(gulp.dest(paths.appOut));
+      .pipe(sourcemaps.write("maps/"))                  //  Relative to appOut.
+      .pipe(gulp.dest(paths.appOut));
 });
 
 gulp.task("copy-templates", function () {
@@ -169,15 +161,13 @@ function runTests(doneCallback) {
 }
 
 gulp.task("build-tests", function () {
-  var tscResult = gulp.src([paths.testSources, paths.appScripts + "widgetState.ts", paths.appScripts + "**/*.d.ts", paths.typings + "**/*.d.ts"])
+  var tscProject = tsc.createProject("tsconfig.json", {
+    rootDir: "./tests/frontend/",
+    outDir: paths.testsOut   
+  });
+  var tscResult = tscProject.src()
                     .pipe(sourcemaps.init())
-                    .pipe(tsc({
-                      target: "ES5",
-                      removeComments: false,
-                      noImplicitAny: true,
-                      noEmitOnError: true,
-                      noExternalResolve: true
-                    }));
+                    .pipe(tsc(tscProject));
 
   return tscResult.js
           .pipe(sourcemaps.write("maps/"))                  //  Relative to testsOut.
