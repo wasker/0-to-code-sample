@@ -3,7 +3,6 @@
 
 /// <reference path="widgetState.ts" />
 
-
 declare namespace WidgetRegistry {
 	/** Application module name. */
 	var appModuleName: string;
@@ -111,6 +110,7 @@ declare namespace WidgetRegistry {
 		/** Callback to perform widget operation when user commits changes in the editor. */		
 		performWidgetOperation: WidgetOperationCallback;
 
+		/** Deferred to be used by the editor to resolve/reject on OK/Cancel. */		
 		deferred: ng.IDeferred<any>;
 		
 		/** Indicates whether the data is valid. */		
@@ -121,6 +121,21 @@ declare namespace WidgetRegistry {
 	
 		/** If operation results in an error, contains a message. */
 		errorMessage?: string;			
+	}
+
+	/** Widget editor controller operations. */	
+	interface IWidgetEditorController extends ng.IComponentController {
+		/** Widget editor model. */
+		model: WidgetEditorModel;
+
+		/** Occurs when user clicks OK button. */
+		ok(): void;
+
+		/** Occurs when user clicks Cancel button. */
+		cancel(): void;
+
+		/** Indicates whether the model is valid. */		
+		isValid(): boolean;
 	}
 }
 

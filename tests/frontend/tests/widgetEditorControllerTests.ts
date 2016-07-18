@@ -1,11 +1,9 @@
-/// <reference path="../setup.ts" />
-
 describe("widgetEditorController", function() {
 
-	var controllerName = "widgetEditorController";
+	let controllerName = "widgetEditor";
 	
-	var app = <WidgetRegistryAppMock>{};	
-	var controller = <WidgetRegistryControllerMock>{};
+	let app = <WidgetRegistryAppMock>{};	
+	let controller = <WidgetRegistryControllerMock>{};
 
 	beforeEach(function() {
 		app = startApplication();
@@ -13,160 +11,152 @@ describe("widgetEditorController", function() {
 	});
 
 	it("initializes scope", function() {
-		var deferred = controller.promises.defer();
-		var model = createEditorModel(null, _ => deferred.promise);
-		var scope = <WidgetRegistry.WidgetEditorScope>controller.rootScope.$new();
+		let widgetCallbackDeferred = controller.promises.defer();
+		let editorDeferred = createWidgetEditorControllerDeferred();
+		let model = createEditorModel(null, _ => widgetCallbackDeferred.promise, editorDeferred.deferred);
 
-		controller.factory(controllerName, {
-			model: model,
-			appConfig: app.config,
-			$scope: scope,
-			$modalInstance: openModal(model)
-		});
+		let component = createWidgetEditorController(model);
 
-		expect(scope.model).toBeDefined();
-		expect(scope.model.widget).toBe(model.widget);
-		expect(scope.model.isValid).toBe(true);
-		expect(scope.model.operationInProgress).toBe(false);
-		expect(scope.model.errorMessage).toBeFalsy();
-		expect(scope.ok).toBeDefined();
-		expect(scope.cancel).toBeDefined();
+		expect(component.model).toBeDefined();
+		expect(component.model.widget).toBe(model.widget);
+		expect(component.model.isValid).toBe(true);
+		expect(component.model.operationInProgress).toBe(false);
+		expect(component.model.errorMessage).toBeFalsy();
+		expect(component.ok).toBeDefined();
+		expect(component.cancel).toBeDefined();
+		expect(editorDeferred.status).not.toBeDefined();
 	});
 
 	it("closes if model is valid and operation successful", function() {
-		var deferred = controller.promises.defer();
-		var model = createEditorModel(null, _ => deferred.promise);
-		var scope = <WidgetRegistry.WidgetEditorScope>controller.rootScope.$new();
+		let widgetCallbackDeferred = controller.promises.defer();
+		let editorDeferred = createWidgetEditorControllerDeferred();
 
+		let model = createEditorModel(null, _ => widgetCallbackDeferred.promise, editorDeferred.deferred);
 		model.errorMessage = "previous error message, should be cleared when operation starts";
         
-		var modal = openModal(model);
-		spyOn(modal, "close").and.stub();
+		let component = createWidgetEditorController(model);
 
-		controller.factory(controllerName, {
-			model: model,
-			appConfig: app.config,
-			$scope: scope,
-			$modalInstance: modal
-		});
-
-		scope.ok();
+		component.ok();
 		expect(model.operationInProgress).toBe(true);
 		expect(model.errorMessage).toBeFalsy();
 
 		//	Successful outcome.		
-		deferred.resolve();
-		scope.$digest();
+		widgetCallbackDeferred.resolve();
+		controller.rootScope.$digest();
 
 		expect(model.operationInProgress).toBe(false);
 		expect(model.errorMessage).toBeFalsy();
-		expect(modal.close).toHaveBeenCalled();
+		expect(editorDeferred.status).toBe("resolved");
 	});
 
 	it("shows error if model is valid, but operation is unsuccessful", function() {
-		var deferred = controller.promises.defer();
-		var model = createEditorModel(null, _ => deferred.promise);
-		var scope = <WidgetRegistry.WidgetEditorScope>controller.rootScope.$new();
+		let widgetCallbackDeferred = controller.promises.defer();
+		let editorDeferred = createWidgetEditorControllerDeferred();
+		let model = createEditorModel(null, _ => widgetCallbackDeferred.promise, editorDeferred.deferred);
 
-		var modal = openModal(model);
-		spyOn(modal, "close").and.stub();
-
-		controller.factory(controllerName, {
-			model: model,
-			appConfig: app.config,
-			$scope: scope,
-			$modalInstance: modal
-		});
-
-		scope.ok();
+		let component = createWidgetEditorController(model);
+		
+		component.ok();
 		expect(model.operationInProgress).toBe(true);
 
 		//	Unsuccessful outcome.		
-		deferred.reject();
-		scope.$digest();
+		widgetCallbackDeferred.reject();
+		controller.rootScope.$digest();
 
-		expect(modal.close).not.toHaveBeenCalled();
-		expect(scope.model.errorMessage).toBeTruthy();
+		expect(component.model.errorMessage).toBeTruthy();
 		expect(model.operationInProgress).toBe(false);
+		expect(editorDeferred.status).not.toBeDefined();
 	});
 
 	it("doesn't perform operation if model is invalid", function() {
-		var operationIsNotExpected = (_: WidgetRegistry.Widget): ng.IPromise<any> => {
+		let operationIsNotExpected = (_: WidgetRegistry.Widget): ng.IPromise<any> => {
 			throw new Error("Operation is not expected.");
 		};
+		let editorDeferred = createWidgetEditorControllerDeferred();
 
-		var model = createEditorModel(null, operationIsNotExpected);
+		let model = createEditorModel(null, operationIsNotExpected, editorDeferred.deferred);
 		model.widget.name = "";								//	Invalid data.
 
-		var scope = <WidgetRegistry.WidgetEditorScope>controller.rootScope.$new();
+		let component = createWidgetEditorController(model);
 
-		controller.factory(controllerName, {
-			model: model,
-			appConfig: app.config,
-			$scope: scope,
-			$modalInstance: openModal(model)
-		});
-
-		scope.ok();
+		component.ok();
 		expect(model.operationInProgress).toBe(false);
 
-		scope.$digest();
+		controller.rootScope.$digest();
 
 		expect(model.isValid).toBe(false);
 		expect(model.operationInProgress).toBe(false);
+		expect(editorDeferred.status).not.toBeDefined();
 	});
 
 	it("dismisses the modal if user clicks cancel", function() {
-		var operationIsNotExpected = (_: WidgetRegistry.Widget): ng.IPromise<any> => {
+		let operationIsNotExpected = (_: WidgetRegistry.Widget): ng.IPromise<any> => {
 			throw new Error("Operation is not expected.");
 		};
 
-		var model = createEditorModel(null, operationIsNotExpected);
-		var scope = <WidgetRegistry.WidgetEditorScope>controller.rootScope.$new();
+		let editorDeferred = createWidgetEditorControllerDeferred();
 
-		var modal = openModal(model);
-		spyOn(modal, "dismiss").and.stub();
+		let model = createEditorModel(null, operationIsNotExpected, editorDeferred.deferred);
+		let component = createWidgetEditorController(model);
 
-		controller.factory(controllerName, {
-			model: model,
-			appConfig: app.config,
-			$scope: scope,
-			$modalInstance: modal
-		});
-
-		scope.cancel();
+		component.cancel();
 		expect(model.operationInProgress).toBe(false);
 
-		scope.$digest();
+		controller.rootScope.$digest();
 
-		expect(modal.dismiss).toHaveBeenCalled();
 		expect(model.operationInProgress).toBe(false);
+		expect(editorDeferred.status).toBe("rejected");
 	});
+
+	/** 
+	 * Creates and initializes an instance of the WidgetEditorController component.
+	 * @param model Editor model.
+	 */
+	function createWidgetEditorController(model: WidgetRegistry.WidgetEditorModel): WidgetRegistry.IWidgetEditorController {
+		let component = <WidgetRegistry.IWidgetEditorController>controller.factory(controllerName, { $scope: controller.rootScope.$new() }, { model, appConfig: app.config });
+		component.$onInit();
+
+		return component;
+	}
 
 	/** 
 	 * Creates editor model.
 	 * @param widget If null, a random valid widget will be created, otherwise model's widget will be set to this argument's value.
-	 * @param callback Operation that will be performed on widget when user clicks OK. 
+	 * @param performWidgetOperation Operation that will be performed on widget when user clicks OK.
+	 * @param deferred Deferred that will be resolved/rejected by the editor on OK/Cancel.
 	 */	
-	function createEditorModel(widget: WidgetRegistry.Widget, callback: WidgetRegistry.WidgetOperationCallback): WidgetRegistry.WidgetEditorModel {
+	function createEditorModel(widget: WidgetRegistry.Widget, performWidgetOperation: WidgetRegistry.WidgetOperationCallback, deferred: ng.IDeferred<any>): WidgetRegistry.WidgetEditorModel {
 		return {
+			deferred,
 			widget: widget || createFakeWidgetInstance(),
-			performWidgetOperation: callback
+			performWidgetOperation
 		};
 	}
 
 	/**
-	 * Opens modal dialog.
-	 * @param model A model that will be used for dialog.
-	 */	
-	function openModal(model: WidgetRegistry.WidgetEditorModel): ng.ui.bootstrap.IModalServiceInstance {
-		return controller.modal.open({
-			resolve: {
-				model: model
-			},
-			templateUrl: app.config.templateRoot + "widgetEditor.html",
-			controller: controllerName
-		});
+	 * Creates an instance of the WidgetEditorControllerDeferred structure.
+	 */
+	function createWidgetEditorControllerDeferred(): WidgetEditorControllerDeferred {
+		let deferred = controller.promises.defer();
+
+		let result: WidgetEditorControllerDeferred = {
+			deferred
+		};
+
+		deferred.promise
+			.then(() => result.status = "resolved")
+			.catch(() => result.status = "rejected");
+		
+		return result;
 	}
 	
 });
+
+/** An internal structure for testing deferred outcomes. */
+interface WidgetEditorControllerDeferred {
+	/** Deferred instance. */
+	deferred: ng.IDeferred<any>;
+
+	/** Promist status. */	
+	status?: string;
+}

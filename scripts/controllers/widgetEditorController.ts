@@ -3,7 +3,7 @@
 namespace WidgetRegistry {
 
 	/** Widget editor controller. */
-	class WidgetEditorController implements ng.IComponentController {
+	class WidgetEditorController implements IWidgetEditorController {
 		/** Dependencies. */
 		public static $inject = ["appConfig"];
 
@@ -18,10 +18,10 @@ namespace WidgetRegistry {
 			this.model.operationInProgress = false;
 		}
 
-		/** Widget editor model. */
+		/** Part of IWidgetEditorController. */
 		public model: WidgetEditorModel;
 
-		/** Occurs when user clicks OK button. */		
+		/** Part of IWidgetEditorController. */
 		public ok = (): void => {
 			if (!this.isValid()) {
 				this.model.isValid = false;
@@ -35,10 +35,10 @@ namespace WidgetRegistry {
 					.catch(() => this.model.errorMessage = "We cannot save your changes now. Please try again later."));
 		}
 
-		/** Occurs when user clicks Cancel button. */		
+		/** Part of IWidgetEditorController. */
 		public cancel = () => this.model.deferred.reject();
 
-		/** Indicates whether the model is valid. */		
+		/** Part of IWidgetEditorController. */
 		public isValid = (): boolean => !!this.model.widget.name;
 
 		/** Wraps an operation with operationInProgress indicator. */		

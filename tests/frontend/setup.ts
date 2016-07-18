@@ -8,7 +8,7 @@ interface WidgetRegistryAppMock {
 /** Mock controllers for application. */
 interface WidgetRegistryControllerMock {
 	/** Controller factory. */
-	factory: ng.IControllerService;
+	factory: ng.IComponentControllerService;
 
 	/** Root scope. */	
 	rootScope: ng.IRootScopeService;
@@ -55,8 +55,8 @@ function startApplication(): WidgetRegistryAppMock {
 function mockWidgetRegistryController(): WidgetRegistryControllerMock {
 	var result = <WidgetRegistryControllerMock>{};
 
-	angular.mock.inject(($controller: ng.IControllerService, $rootScope: ng.IRootScopeService, $modal: ng.ui.bootstrap.IModalService, $q: ng.IQService) => {
-		result.factory = $controller;
+	angular.mock.inject(($componentController: ng.IComponentControllerService, $rootScope: ng.IRootScopeService, $modal: ng.ui.bootstrap.IModalService, $q: ng.IQService) => {
+		result.factory = $componentController;
 		result.rootScope = $rootScope;
 		result.modal = $modal;
 		result.promises = $q;
