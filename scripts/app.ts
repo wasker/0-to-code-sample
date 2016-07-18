@@ -1,38 +1,41 @@
-/// <reference path="appTypes.d.ts" />
 /// <reference path="../typings/angular-ui-router/angular-ui-router.d.ts" />
 
-namespace WidgetRegistry {
+import { Component } from "@angular/core";
 
-	//	Configure application module name.	
-	appModuleName = "widgetRegistryApp";
+@Component({
+	selector: "my-app",
+	template: "<h1>My First Angular 2 App</h1>"
+})
+export class AppComponent { }
 
-	//	Create application module.	
-	var app = angular.module(appModuleName, ["widgetRegistryData", "ui.router", "ui.bootstrap"]);
+// //	Configure application module name.
+// export var appModuleName = "widgetRegistryApp";
 
-	//	Configure application module.	
-	app.config(["appConfig", "$stateProvider", "$urlRouterProvider", function (appConfig: AppConfig, $stateProvider: ng.ui.IStateProvider, $urlRouterProvider: ng.ui.IUrlRouterProvider) {
-		$stateProvider
-			.state("root", {
-				url: "/",
-				templateUrl: getPathToTemplate(appConfig, "index.html")
-			});
+// //	Create application module.	
+// var app = angular.module(appModuleName, ["widgetRegistryData", "ui.router", "ui.bootstrap"]);
 
-		$urlRouterProvider.otherwise("/");
-	}]);
+// //	Configure application module.	
+// app.config(["appConfig", "$stateProvider", "$urlRouterProvider", function (appConfig: WidgetRegistryTypes.AppConfig, $stateProvider: ng.ui.IStateProvider, $urlRouterProvider: ng.ui.IUrlRouterProvider) {
+// 	$stateProvider
+// 		.state("root", {
+// 			url: "/",
+// 			templateUrl: getPathToTemplate(appConfig, "index.html")
+// 		});
 
-	//	Initialize application module.	
-	app.run(["appConfig", "$rootScope", function(appConfig: AppConfig, $rootScope: ng.IRootScopeService) {
-		//	Expose global functions on root scope.
-		(<ng.IScope>$rootScope).pathToTemplate = (fileName: string) => getPathToTemplate(appConfig, fileName);
-	}]);
+// 	$urlRouterProvider.otherwise("/");
+// }]);
 
-	/**
-	 * Constructs full path to template.
-	 * @param appConfig Application configuration. 
-	 * @param fileName Template file name without path.
-	 */	
-	function getPathToTemplate(appConfig: AppConfig, fileName: string): string {
-		return appConfig.templateRoot + fileName;
-	}
+// //	Initialize application module.	
+// app.run(["appConfig", "$rootScope", function(appConfig: WidgetRegistryTypes.AppConfig, $rootScope: ng.IRootScopeService) {
+// 	//	Expose global functions on root scope.
+// 	(<ng.IScope>$rootScope).pathToTemplate = (fileName: string) => getPathToTemplate(appConfig, fileName);
+// }]);
 
-}
+// /**
+//  * Constructs full path to template.
+//  * @param appConfig Application configuration. 
+//  * @param fileName Template file name without path.
+//  */	
+// function getPathToTemplate(appConfig: WidgetRegistryTypes.AppConfig, fileName: string): string {
+// 	return appConfig.templateRoot + fileName;
+// }

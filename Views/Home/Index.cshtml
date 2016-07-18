@@ -7,24 +7,18 @@
 
 <script type="text/javascript">
 
-	var appData = angular.module("widgetRegistryData", []);
+    System.import('app').catch(function(err){ console.error(err); });
 
-    var appConfig = {
-        apiEndpoint: "/api/widgets/",
-		templateRoot: "/templates/"
-    };
-	appData.constant("appConfig", appConfig);
+	// var appData = angular.module("widgetRegistryData", []);
+
+    // var appConfig = {
+    //     apiEndpoint: "/api/widgets/",
+	// 	templateRoot: "/templates/"
+    // };
+	// appData.constant("appConfig", appConfig);
 
 </script>
 
-<environment names="Development">
-    <script src="~/js/templates.js"></script>
-    <script src="~/js/app.js"></script>
-</environment>
-<environment names="Staging,Production">
-    <script src="~/js/app.min.js"></script>
-</environment>
-
 }
 
-<div ui-view></div>
+<my-app>Loading...</my-app>

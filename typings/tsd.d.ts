@@ -5,3 +5,5 @@
 /// <reference path="jasmine-jquery/jasmine-jquery.d.ts" />
 /// <reference path="jasmine/jasmine.d.ts" />
 /// <reference path="bootstrap/bootstrap.d.ts" />
+/// <reference path="core-js/core-js.d.ts" />
+/// <reference path="node/node.d.ts" />

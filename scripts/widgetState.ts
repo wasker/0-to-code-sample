@@ -1,4 +1,4 @@
-namespace WidgetRegistry {
+namespace WidgetRegistryTypes {
 
 	/** States of the widget. */	
 	export enum WidgetState {

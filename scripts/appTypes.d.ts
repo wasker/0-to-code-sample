@@ -3,10 +3,9 @@
 
 /// <reference path="widgetState.ts" />
 
-
-declare namespace WidgetRegistry {
+declare namespace WidgetRegistryTypes {
 	/** Application module name. */
-	var appModuleName: string;
+	export var appModuleName: string;
 
 	/** Application configuration. */	
 	interface AppConfig {

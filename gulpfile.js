@@ -136,8 +136,10 @@ gulp.task("compile-styles", function () {
 });
 
 gulp.task("copy-libs", function () {
+  gulp.src(paths.appScripts + "systemjs.config.js").pipe(gulp.dest(paths.appOut));
+
   gulp.src(paths.nodeModules + "@angular/**/bundles/*.min.js").pipe(gulp.dest(paths.libOut + "@angular"));
-  gulp.src(paths.nodeModules + "rxjs/**/bundles/*.min.js").pipe(gulp.dest(paths.libOut + "rxjs"));
+  gulp.src(paths.nodeModules + "rxjs/**/*.js*").pipe(gulp.dest(paths.libOut + "rxjs"));
   gulp.src(paths.nodeModules + "core-js/client/*.min.js").pipe(gulp.dest(paths.libOut + "core-js/client"));
   gulp.src(paths.nodeModules + "systemjs/dist/*.js").pipe(gulp.dest(paths.libOut + "systemjs/dist"));
   gulp.src(paths.nodeModules + "zone.js/dist/*.min.js").pipe(gulp.dest(paths.libOut + "zone.js/dist"));
