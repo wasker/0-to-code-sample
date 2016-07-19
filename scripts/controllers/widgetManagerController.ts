@@ -5,11 +5,12 @@ namespace WidgetRegistry {
 	/** Widget manager controller. */	
 	class WidgetManagerController implements IWidgetManagerController {
 		/** Dependencies. */
-		public static $inject = ["appConfig", "widgetService", "$q"];
+		public static $inject = ["appConfig", "widgetService", "modalHostFactory", "$q"];
 
 		constructor(
 			private appConfig: AppConfig,
 			private widgetService: IWidgetService,
+			private modalHostFactory: IModalHostFactory,
 			private $promise: ng.IQService) {
 
 		}
@@ -105,29 +106,21 @@ namespace WidgetRegistry {
 		
 		/** Invokes widget editor. */		
 		private editWidgetImpl = (widget: Widget, callback: WidgetOperationCallback): ng.IPromise<any> => {
-			let deferred = this.$promise.defer();
-
-			this.editWidgetModel = {
-				widget,
-				deferred,
-				performWidgetOperation: callback
-			};
-
-			let modalHost = angular.element("#widgetEditorHost");			
-
-			let promise = deferred.promise;
-			promise.finally(() => {
-				modalHost.modal("hide");
-				delete this.editWidgetModel;
-			});
-			
-			modalHost.modal({
+			let modalHost = this.modalHostFactory.create("#widgetEditorHost", {
 				show: true,
 				keyboard: false,
 				backdrop: "static"
-			});
+			});			
 
-			return promise;
+			this.editWidgetModel = {
+				widget,
+				deferred: modalHost.getDeferred(),
+				performWidgetOperation: callback
+			};
+
+			return modalHost.show().finally(() => {
+				delete this.editWidgetModel;
+			});
 		}
 	}
 

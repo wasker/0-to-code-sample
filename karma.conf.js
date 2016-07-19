@@ -15,6 +15,7 @@ module.exports = function(config) {
       "./node_modules/jasmine-jquery/lib/jasmine-jquery.js",
       "./wwwroot/js/**/*.js",
       "./wwwroot/tests/setup.js",
+      "./wwwroot/tests/fakeModalHost.js",
       "./wwwroot/tests/tests/**/*.js"
     ],
     exclude: [

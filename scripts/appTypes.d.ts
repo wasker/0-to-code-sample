@@ -167,6 +167,28 @@ declare namespace WidgetRegistry {
 		 */		
 		undeleteWidget(widget: Widget): void;
 	}
+
+	/** Modal dialog host operations. */	
+	interface IModalHost {
+		/** Gets deferred associated with the host. Caller should resolve/reject the deferred's promise in order to close the dialog. */
+		getDeferred(): ng.IDeferred<any>;
+
+		/** 
+		 * Shows the dialog.
+		 * @returns Promise that will be resolved/rejected when dialog closes.
+		 */
+		show(): ng.IPromise<any>;
+	}
+
+	/** Creates a new instance of IModalHost implementation. */	
+	interface IModalHostFactory {
+		/**
+		 * Creates a new instance of IModalHost implementation.
+		 * @param selector JQuery selector for an element that will host the dialog.
+		 * @param options Options for modal dialog.
+		 */
+		create(selector: string, options: ModalOptions): IModalHost;
+	}
 }
 
 declare module angular {

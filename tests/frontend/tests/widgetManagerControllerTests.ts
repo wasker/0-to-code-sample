@@ -52,86 +52,71 @@ describe("widgetManagerController", function() {
 		expect(component.model.errorMessage).toBeTruthy();
 	});
 
-	// it("adds a new widget to list if operation completes successfully", function() {
-	// 	let data = setupGetWidgetsSuccess();
-	// 	let scope = createWidgetManagerController(<WidgetRegistry.WidgetManagerScope>controller.rootcomponent.$new());
+	it("adds a new widget to list if operation completes successfully", function () {
+		let deferred = controller.promises.defer();		
+		controller.modal = new FakeModalHostFactory(deferred);
+		
+		let data = setupGetWidgetsSuccess();
+		let component = createWidgetManagerController();
+		service.httpMock.flush();	//	Make sure GET all goes through.
 
-	// 	let deferred = controller.promises.defer();		
-	// 	spyOn(controller.modal, "open").and.returnValue({ result: deferred.promise });
+		component.addWidget();
+		deferred.resolve();
 
-	// 	component.addWidget();
-	// 	deferred.resolve();
+		controller.rootScope.$digest();
+		expect(component.model.widgets.length).toBe(data.length + 1);
+		expect(component.model.errorMessage).toBeFalsy();
+	});
 
-	// 	deferred.promise.finally(() => {
-	// 		expect(component.model.widgets.length).toBe(data.length + 1);
-	// 		expect(component.model.errorMessage).toBeFalsy();
-	// 	});	
-	// });
+	it("doesn't add a new widget to list if operation was canceled", function() {
+		let deferred = controller.promises.defer();		
+		controller.modal = new FakeModalHostFactory(deferred);
+		
+		let data = setupGetWidgetsSuccess();
+		let component = createWidgetManagerController();
+		service.httpMock.flush();	//	Make sure GET all goes through.
 
-	// it("doesn't add a new widget to list if operation was canceled", function() {
-	// 	let data = setupGetWidgetsSuccess();
-	// 	let scope = createWidgetManagerController(<WidgetRegistry.WidgetManagerScope>controller.rootcomponent.$new());
+		component.addWidget();
+		deferred.reject();
 
-	// 	let deferred = controller.promises.defer();		
-	// 	spyOn(controller.modal, "open").and.returnValue({ result: deferred.promise });
+		controller.rootScope.$digest();
+		expect(component.model.widgets.length).toBe(data.length);
+		expect(component.model.errorMessage).toBeFalsy(); 
+	});
 
-	// 	component.addWidget();
-	// 	deferred.reject();
+	it("changes a widget on the list if operation completes successfully", function() {
+		let deferred = controller.promises.defer();		
+		controller.modal = new FakeModalHostFactory(deferred);
+		
+		let data = setupGetWidgetsSuccess();
+		let component = createWidgetManagerController();
+		service.httpMock.flush();	//	Make sure GET all goes through.
 
-	// 	deferred.promise.finally(() => {
-	// 		expect(component.model.widgets.length).toBe(data.length);
-	// 		expect(component.model.errorMessage).toBeFalsy(); 
-	// 	});	
-	// });
+		let selectedWidget = component.model.widgets[1];        
+		component.editWidget(selectedWidget);
+		deferred.resolve();
 
-	// it("changes a widget on the list if operation completes successfully", function() {
-	// 	let data = setupGetWidgetsSuccess();
-	// 	let scope = createWidgetManagerController(<WidgetRegistry.WidgetManagerScope>controller.rootcomponent.$new());
+		controller.rootScope.$digest();
+		expect(component.model.widgets.length).toBe(data.length);
+		expect(component.model.errorMessage).toBeFalsy();
+	});
 
-	// 	let deferred = controller.promises.defer();		
-	// 	spyOn(controller.modal, "open").and.callFake((settings: angular.ui.bootstrap.IModalSettings) => {
-	// 		let widget = <WidgetRegistry.Widget>(<any>settings.resolve).model().widget;
-	// 		widget.name = "changed";
-            
-	// 		return { result: deferred.promise };
-	// 	});
+	it("doesn't change a widget on the list if operation was canceled", function() {
+		let deferred = controller.promises.defer();		
+		controller.modal = new FakeModalHostFactory(deferred);
+		
+		let data = setupGetWidgetsSuccess();
+		let component = createWidgetManagerController();
+		service.httpMock.flush();	//	Make sure GET all goes through.
 
-	// 	let selectedWidget = component.model.widgets[1];        
-	// 	component.editWidget(selectedWidget);
-	// 	deferred.resolve();
+		let selectedWidget = component.model.widgets[1];
+		component.editWidget(selectedWidget);
+		deferred.reject();
 
-	// 	deferred.promise.finally(() => {
-	// 		expect(component.model.widgets.length).toBe(data.length);
-	// 		expect(selectedWidget.name).toBe("changed");
-	// 		expect(component.model.errorMessage).toBeFalsy();
-	// 	});	
-	// });
-
-	// it("doesn't change a widget on the list if operation was canceled", function() {
-	// 	let data = setupGetWidgetsSuccess();
-	// 	let scope = createWidgetManagerController(<WidgetRegistry.WidgetManagerScope>controller.rootcomponent.$new());
-
-	// 	let deferred = controller.promises.defer();		
-	// 	spyOn(controller.modal, "open").and.callFake((settings: angular.ui.bootstrap.IModalSettings) => {
-	// 		let widget = <WidgetRegistry.Widget>(<any>settings.resolve).model().widget;
-	// 		widget.name = "changed";
-            
-	// 		return { result: deferred.promise };
-	// 	});
-
-	// 	let selectedWidget = component.model.widgets[1];
-	// 	let originalName = selectedWidget.name;
-
-	// 	component.editWidget(selectedWidget);
-	// 	deferred.reject();
-
-	// 	deferred.promise.finally(() => {
-	// 		expect(component.model.widgets.length).toBe(data.length);
-	// 		expect(selectedWidget.name).not.toBe("changed");
-	// 		expect(selectedWidget.name).toBe(originalName);
-	// 		expect(component.model.errorMessage).toBeFalsy();
-	// 	});	
-	// });
+		controller.rootScope.$digest();
+		expect(component.model.widgets.length).toBe(data.length);
+		expect(component.model.errorMessage).toBeFalsy();
+	});
 
 	it("undeletes widget on the list if operation completes successfully", function() {
 		let data = setupGetWidgetsSuccess();
@@ -301,13 +286,13 @@ describe("widgetManagerController", function() {
 	 * Creates and initializes an instance of the WidgetManagerController component.
 	 */
 	function createWidgetManagerController(): WidgetRegistry.IWidgetManagerController {
-		let dependencies = {
-			widgetService: service.instance,
+		let component = <WidgetRegistry.IWidgetManagerController>controller.factory(controllerName, {
+			$scope: controller.rootScope.$new(),
 			appConfig: app.config,
+			widgetService: service.instance,
+			modalHostFactory: controller.modal,
 			$q: controller.promises
-		};	
-
-		let component = <WidgetRegistry.IWidgetManagerController>controller.factory(controllerName, { $scope: controller.rootScope.$new(), locals: dependencies });
+		});
 		component.$onInit();
 
 		controller.rootScope.$digest();

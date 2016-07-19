@@ -13,8 +13,8 @@ interface WidgetRegistryControllerMock {
 	/** Root scope. */	
 	rootScope: ng.IRootScopeService;
 
-	/** Modal service. */	
-	modal: ng.ui.bootstrap.IModalService;
+	/** Modal host factory. */	
+	modal: WidgetRegistry.IModalHostFactory;
 
 	/** Q service. */	
 	promises: ng.IQService;	
@@ -55,10 +55,10 @@ function startApplication(): WidgetRegistryAppMock {
 function mockWidgetRegistryController(): WidgetRegistryControllerMock {
 	var result = <WidgetRegistryControllerMock>{};
 
-	angular.mock.inject(($componentController: ng.IComponentControllerService, $rootScope: ng.IRootScopeService, $modal: ng.ui.bootstrap.IModalService, $q: ng.IQService) => {
+	angular.mock.inject(($componentController: ng.IComponentControllerService, $rootScope: ng.IRootScopeService, modalHostFactory: WidgetRegistry.IModalHostFactory, $q: ng.IQService) => {
 		result.factory = $componentController;
 		result.rootScope = $rootScope;
-		result.modal = $modal;
+		result.modal = modalHostFactory;
 		result.promises = $q;
 	});
 
