@@ -3,7 +3,7 @@
 namespace WidgetRegistry {
 
 	/** Widget manager controller. */	
-	class WidgetManagerController implements ng.IComponentController {
+	class WidgetManagerController implements IWidgetManagerController {
 		/** Dependencies. */
 		public static $inject = ["appConfig", "widgetService", "$q"];
 
@@ -21,16 +21,16 @@ namespace WidgetRegistry {
 				.catch(() => this.model.errorMessage = "Cannot get list of widgets. Please try again later."));
 		}
 
-		/** Widget manager model. */
+		/** Part of IWidgetManagerController. */
 		public model: WidgetManagerModel = {
 			widgets: [],
 			operationInProgress: false
 		};
 
-		/** Model for widget editor. */		
+		/** Part of IWidgetManagerController. */
 		public editWidgetModel: WidgetEditorModel;
 
-		/** Initiates operation of adding a new widget. */		
+		/** Part of IWidgetManagerController. */
 		public addWidget = (): void => {
 			let widget: Widget = {
 				$state: WidgetState.new,
@@ -45,10 +45,7 @@ namespace WidgetRegistry {
 			});	
 		}
 		
-		/** 
-		* Edits widget.
-		* @param widget Widget to be edited.
-		*/		
+		/** Part of IWidgetManagerController. */
 		public editWidget = (widget: Widget): void => {
 			let selectedWidget = angular.copy(widget);
 		
@@ -57,10 +54,7 @@ namespace WidgetRegistry {
 			});	
 		}
 
-		/** 
-		* Deletes widget.
-		* @param widget Widget to be deleted.
-		*/		
+		/** Part of IWidgetManagerController. */
 		public deleteWidget = (widget: Widget): void => {
 			let widgetWasNew = (widget.$state && WidgetState.new == widget.$state);
 			widget.$state = WidgetState.deleting;
@@ -86,10 +80,7 @@ namespace WidgetRegistry {
 					}));
 		}
 
-		/** 
-		* Restores widget that was deleted.
-		* @param widget Widget to be restored.
-		*/		
+		/** Part of IWidgetManagerController. */
 		public undeleteWidget = (widget: Widget): void => {
 			widget.$state = WidgetState.undeleting;
 

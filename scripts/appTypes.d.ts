@@ -137,6 +137,36 @@ declare namespace WidgetRegistry {
 		/** Indicates whether the model is valid. */		
 		isValid(): boolean;
 	}
+
+	/** Widget manager controller operations. */	
+	interface IWidgetManagerController extends ng.IComponentController {
+		/** Widget manager model. */
+		model: WidgetManagerModel;
+
+		/** Model for widget editor. */
+		editWidgetModel: WidgetEditorModel;
+
+		/** Initiates operation of adding a new widget. */
+		addWidget(): void;
+
+		/**
+		 * Edits widget.
+		 * @param widget Widget to be edited.
+		 */		
+		editWidget(widget: Widget): void;
+
+		/**
+		 * Deletes widget.
+		 * @param widget Widget to be deleted.
+		 */		
+		deleteWidget(widget: Widget): void;
+
+		/**
+		 * Restores widget that was deleted.
+		 * @param widget Widget to be restored.
+		 */		
+		undeleteWidget(widget: Widget): void;
+	}
 }
 
 declare module angular {

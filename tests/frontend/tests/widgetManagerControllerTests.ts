@@ -2,11 +2,11 @@
 
 describe("widgetManagerController", function() {
 
-	var controllerName = "widgetManagerController";
+	let controllerName = "widgetManager";
 
-	var app = <WidgetRegistryAppMock>{};	
-	var controller = <WidgetRegistryControllerMock>{};
-	var service = <WidgetServiceMock>{};
+	let app = <WidgetRegistryAppMock>{};	
+	let controller = <WidgetRegistryControllerMock>{};
+	let service = <WidgetServiceMock>{};
 
 	beforeEach(function() {
 		app = startApplication();
@@ -20,317 +20,304 @@ describe("widgetManagerController", function() {
 	});
 
 	it("initializes scope", function() {
-		var expectedData = setupGetWidgetsSuccess();
-		var scope = <WidgetRegistry.WidgetManagerScope>controller.rootScope.$new();
-		
-		controller.factory(controllerName, {
-			appConfig: app.config,
-			$scope: scope,
-			widgetService: service.instance,
-			$modal: controller.modal
-		});
+		let expectedData = setupGetWidgetsSuccess();
+		let component = createWidgetManagerController();
 
-		expect(scope.model).toBeDefined();
-		expect(scope.model.errorMessage).toBeFalsy();
-		expect(scope.addWidget).toBeDefined();
-		expect(scope.editWidget).toBeDefined();
-		expect(scope.deleteWidget).toBeDefined();
-		expect(scope.undeleteWidget).toBeDefined();
+		expect(component.model).toBeDefined();
+		expect(component.model.errorMessage).toBeFalsy();
+		expect(component.addWidget).toBeDefined();
+		expect(component.editWidget).toBeDefined();
+		expect(component.deleteWidget).toBeDefined();
+		expect(component.undeleteWidget).toBeDefined();
 
-		expect(scope.model.operationInProgress).toBe(true);
+		expect(component.model.operationInProgress).toBe(true);
 		service.httpMock.flush();
 
-		expect(scope.model.widgets).toEqual(expectedData);
-		expect(scope.model.operationInProgress).toBe(false);
+		expect(component.model.widgets).toEqual(expectedData);
+		expect(component.model.operationInProgress).toBe(false);
 	});
 
 	it("shows error if get all widgets operation fails", function() {
 		service.httpMock.expectGET(app.config.apiEndpoint + "all").respond(500);
-		var scope = <WidgetRegistry.WidgetManagerScope>controller.rootScope.$new();
-		
-		controller.factory(controllerName, {
-			appConfig: app.config,
-			$scope: scope,
-			widgetService: service.instance,
-			$modal: controller.modal
-		});
+		let component = createWidgetManagerController();
 
-		expect(scope.model).toBeDefined();
-		expect(scope.model.errorMessage).toBeFalsy();
+		expect(component.model).toBeDefined();
+		expect(component.model.errorMessage).toBeFalsy();
 
-		expect(scope.model.operationInProgress).toBe(true);
+		expect(component.model.operationInProgress).toBe(true);
 		service.httpMock.flush();
 
-		expect(scope.model.widgets).toEqual([]);
-		expect(scope.model.operationInProgress).toBe(false);
-		expect(scope.model.errorMessage).toBeTruthy();
+		expect(component.model.widgets).toEqual([]);
+		expect(component.model.operationInProgress).toBe(false);
+		expect(component.model.errorMessage).toBeTruthy();
 	});
 
-	it("adds a new widget to list if operation completes successfully", function() {
-		var data = setupGetWidgetsSuccess();
-		var scope = createController(<WidgetRegistry.WidgetManagerScope>controller.rootScope.$new());
+	// it("adds a new widget to list if operation completes successfully", function() {
+	// 	let data = setupGetWidgetsSuccess();
+	// 	let scope = createWidgetManagerController(<WidgetRegistry.WidgetManagerScope>controller.rootcomponent.$new());
 
-		var deferred = controller.promises.defer();		
-		spyOn(controller.modal, "open").and.returnValue({ result: deferred.promise });
+	// 	let deferred = controller.promises.defer();		
+	// 	spyOn(controller.modal, "open").and.returnValue({ result: deferred.promise });
 
-		scope.addWidget();
-		deferred.resolve();
+	// 	component.addWidget();
+	// 	deferred.resolve();
 
-		deferred.promise.finally(() => {
-			expect(scope.model.widgets.length).toBe(data.length + 1);
-			expect(scope.model.errorMessage).toBeFalsy();
-		});	
-	});
+	// 	deferred.promise.finally(() => {
+	// 		expect(component.model.widgets.length).toBe(data.length + 1);
+	// 		expect(component.model.errorMessage).toBeFalsy();
+	// 	});	
+	// });
 
-	it("doesn't add a new widget to list if operation was canceled", function() {
-		var data = setupGetWidgetsSuccess();
-		var scope = createController(<WidgetRegistry.WidgetManagerScope>controller.rootScope.$new());
+	// it("doesn't add a new widget to list if operation was canceled", function() {
+	// 	let data = setupGetWidgetsSuccess();
+	// 	let scope = createWidgetManagerController(<WidgetRegistry.WidgetManagerScope>controller.rootcomponent.$new());
 
-		var deferred = controller.promises.defer();		
-		spyOn(controller.modal, "open").and.returnValue({ result: deferred.promise });
+	// 	let deferred = controller.promises.defer();		
+	// 	spyOn(controller.modal, "open").and.returnValue({ result: deferred.promise });
 
-		scope.addWidget();
-		deferred.reject();
+	// 	component.addWidget();
+	// 	deferred.reject();
 
-		deferred.promise.finally(() => {
-			expect(scope.model.widgets.length).toBe(data.length);
-			expect(scope.model.errorMessage).toBeFalsy(); 
-		});	
-	});
+	// 	deferred.promise.finally(() => {
+	// 		expect(component.model.widgets.length).toBe(data.length);
+	// 		expect(component.model.errorMessage).toBeFalsy(); 
+	// 	});	
+	// });
 
-	it("changes a widget on the list if operation completes successfully", function() {
-		var data = setupGetWidgetsSuccess();
-		var scope = createController(<WidgetRegistry.WidgetManagerScope>controller.rootScope.$new());
+	// it("changes a widget on the list if operation completes successfully", function() {
+	// 	let data = setupGetWidgetsSuccess();
+	// 	let scope = createWidgetManagerController(<WidgetRegistry.WidgetManagerScope>controller.rootcomponent.$new());
 
-		var deferred = controller.promises.defer();		
-		spyOn(controller.modal, "open").and.callFake((settings: angular.ui.bootstrap.IModalSettings) => {
-			var widget = <WidgetRegistry.Widget>(<any>settings.resolve).model().widget;
-			widget.name = "changed";
+	// 	let deferred = controller.promises.defer();		
+	// 	spyOn(controller.modal, "open").and.callFake((settings: angular.ui.bootstrap.IModalSettings) => {
+	// 		let widget = <WidgetRegistry.Widget>(<any>settings.resolve).model().widget;
+	// 		widget.name = "changed";
             
-			return { result: deferred.promise };
-		});
+	// 		return { result: deferred.promise };
+	// 	});
 
-		var selectedWidget = scope.model.widgets[1];        
-		scope.editWidget(selectedWidget);
-		deferred.resolve();
+	// 	let selectedWidget = component.model.widgets[1];        
+	// 	component.editWidget(selectedWidget);
+	// 	deferred.resolve();
 
-		deferred.promise.finally(() => {
-			expect(scope.model.widgets.length).toBe(data.length);
-			expect(selectedWidget.name).toBe("changed");
-			expect(scope.model.errorMessage).toBeFalsy();
-		});	
-	});
+	// 	deferred.promise.finally(() => {
+	// 		expect(component.model.widgets.length).toBe(data.length);
+	// 		expect(selectedWidget.name).toBe("changed");
+	// 		expect(component.model.errorMessage).toBeFalsy();
+	// 	});	
+	// });
 
-	it("doesn't change a widget on the list if operation was canceled", function() {
-		var data = setupGetWidgetsSuccess();
-		var scope = createController(<WidgetRegistry.WidgetManagerScope>controller.rootScope.$new());
+	// it("doesn't change a widget on the list if operation was canceled", function() {
+	// 	let data = setupGetWidgetsSuccess();
+	// 	let scope = createWidgetManagerController(<WidgetRegistry.WidgetManagerScope>controller.rootcomponent.$new());
 
-		var deferred = controller.promises.defer();		
-		spyOn(controller.modal, "open").and.callFake((settings: angular.ui.bootstrap.IModalSettings) => {
-			var widget = <WidgetRegistry.Widget>(<any>settings.resolve).model().widget;
-			widget.name = "changed";
+	// 	let deferred = controller.promises.defer();		
+	// 	spyOn(controller.modal, "open").and.callFake((settings: angular.ui.bootstrap.IModalSettings) => {
+	// 		let widget = <WidgetRegistry.Widget>(<any>settings.resolve).model().widget;
+	// 		widget.name = "changed";
             
-			return { result: deferred.promise };
-		});
+	// 		return { result: deferred.promise };
+	// 	});
 
-		var selectedWidget = scope.model.widgets[1];
-		var originalName = selectedWidget.name;
+	// 	let selectedWidget = component.model.widgets[1];
+	// 	let originalName = selectedWidget.name;
 
-		scope.editWidget(selectedWidget);
-		deferred.reject();
+	// 	component.editWidget(selectedWidget);
+	// 	deferred.reject();
 
-		deferred.promise.finally(() => {
-			expect(scope.model.widgets.length).toBe(data.length);
-			expect(selectedWidget.name).not.toBe("changed");
-			expect(selectedWidget.name).toBe(originalName);
-			expect(scope.model.errorMessage).toBeFalsy();
-		});	
-	});
+	// 	deferred.promise.finally(() => {
+	// 		expect(component.model.widgets.length).toBe(data.length);
+	// 		expect(selectedWidget.name).not.toBe("changed");
+	// 		expect(selectedWidget.name).toBe(originalName);
+	// 		expect(component.model.errorMessage).toBeFalsy();
+	// 	});	
+	// });
 
 	it("undeletes widget on the list if operation completes successfully", function() {
-		var data = setupGetWidgetsSuccess();
-		var scope = createController(<WidgetRegistry.WidgetManagerScope>controller.rootScope.$new());
+		let data = setupGetWidgetsSuccess();
+		let component = createWidgetManagerController();
+		service.httpMock.flush();	//	Make sure GET all goes through.
 
-		scope.model.errorMessage = "previous error message, should be cleared when operation starts";
-        
-		service.httpMock.expectPATCH(getEndpointWithQueryStringRegexp(app.config)).respond(200, "");
+		component.model.errorMessage = "previous error message, should be cleared when operation starts";
 
-		var selectedWidget = scope.model.widgets[1];
+		let selectedWidget = component.model.widgets[1];
 		selectedWidget.$state = WidgetRegistry.WidgetState.deleted;
 
-		scope.undeleteWidget(selectedWidget);
+		service.httpMock.expectPATCH(getEndpointWithQueryStringRegexp(app.config)).respond(200, "");
+		component.undeleteWidget(selectedWidget);
 
 		//	Operation started, awaiting resolution.        
 		expect(selectedWidget.$state).toBe(WidgetRegistry.WidgetState.undeleting);
-		expect(scope.model.operationInProgress).toBe(true);
-		expect(scope.model.errorMessage).toBeFalsy();
+		expect(component.model.operationInProgress).toBe(true);
+		expect(component.model.errorMessage).toBeFalsy();
 
 		//	Operation resolution.        
 		service.httpMock.flush();
 		expect(selectedWidget.$state).toBe(WidgetRegistry.WidgetState.existing);
-		expect(scope.model.errorMessage).toBeFalsy();
+		expect(component.model.errorMessage).toBeFalsy();
 	});
 
 	it("keeps widget deleted if operation completes fails", function() {
-		var data = setupGetWidgetsSuccess();
-		var scope = createController(<WidgetRegistry.WidgetManagerScope>controller.rootScope.$new());
+		let data = setupGetWidgetsSuccess();
+		let component = createWidgetManagerController();
+		service.httpMock.flush();	//	Make sure GET all goes through.
 
-		service.httpMock.expectPATCH(getEndpointWithQueryStringRegexp(app.config)).respond(500, "");
-
-		var selectedWidget = scope.model.widgets[1];
+		let selectedWidget = component.model.widgets[1];
 		selectedWidget.$state = WidgetRegistry.WidgetState.deleted;
 
-		scope.undeleteWidget(selectedWidget);
+		service.httpMock.expectPATCH(getEndpointWithQueryStringRegexp(app.config)).respond(500, "");
+		component.undeleteWidget(selectedWidget);
 
 		//	Operation started, awaiting resolution.        
 		expect(selectedWidget.$state).toBe(WidgetRegistry.WidgetState.undeleting);
-		expect(scope.model.operationInProgress).toBe(true);
-		expect(scope.model.errorMessage).toBeFalsy();
+		expect(component.model.operationInProgress).toBe(true);
+		expect(component.model.errorMessage).toBeFalsy();
 
 		//	Operation resolution.        
 		service.httpMock.flush();
 		expect(selectedWidget.$state).toBe(WidgetRegistry.WidgetState.deleted);
-		expect(scope.model.errorMessage).toBeTruthy();
+		expect(component.model.errorMessage).toBeTruthy();
 	});
 
 	it("removes newly added widget from the list if operation completes successfully", function() {
-		var data = setupGetWidgetsSuccess();
-		var scope = createController(<WidgetRegistry.WidgetManagerScope>controller.rootScope.$new());
+		let data = setupGetWidgetsSuccess();
+		let component = createWidgetManagerController();
+		service.httpMock.flush();	//	Make sure GET all goes through.
 
-		scope.model.errorMessage = "previous error message, should be cleared when operation starts";
+		component.model.errorMessage = "previous error message, should be cleared when operation starts";
 
-		service.httpMock.expectDELETE(getEndpointWithQueryStringRegexp(app.config)).respond(200, "");
-
-		var selectedWidget = scope.model.widgets[1];
+		let selectedWidget = component.model.widgets[1];
 		selectedWidget.$state = WidgetRegistry.WidgetState.new;
 
-		scope.deleteWidget(selectedWidget);
+		service.httpMock.expectDELETE(getEndpointWithQueryStringRegexp(app.config)).respond(200, "");
+		component.deleteWidget(selectedWidget);
 
 		//	Operation started, awaiting resolution.        
 		expect(selectedWidget.$state).toBe(WidgetRegistry.WidgetState.deleting);
-		expect(scope.model.operationInProgress).toBe(true);
-		expect(scope.model.errorMessage).toBeFalsy();
+		expect(component.model.operationInProgress).toBe(true);
+		expect(component.model.errorMessage).toBeFalsy();
 
 		//	Operation resolution.        
 		service.httpMock.flush();
-		expect(scope.model.widgets).not.toContain(selectedWidget);
-		expect(scope.model.errorMessage).toBeFalsy();
+		expect(component.model.widgets).not.toContain(selectedWidget);
+		expect(component.model.errorMessage).toBeFalsy();
 	});
 
 	it("marks existing widget as deleted if operation completes successfully", function() {
-		var data = setupGetWidgetsSuccess();
-		var scope = createController(<WidgetRegistry.WidgetManagerScope>controller.rootScope.$new());
+		let data = setupGetWidgetsSuccess();
+		let component = createWidgetManagerController();
+		service.httpMock.flush();	//	Make sure GET all goes through.
 
-		scope.model.errorMessage = "previous error message, should be cleared when operation starts";
+		component.model.errorMessage = "previous error message, should be cleared when operation starts";
 
-		service.httpMock.expectDELETE(getEndpointWithQueryStringRegexp(app.config)).respond(200, "");
-
-		var selectedWidget = scope.model.widgets[1];
+		let selectedWidget = component.model.widgets[1];
 		delete selectedWidget.$state;
 
-		scope.deleteWidget(selectedWidget);
+		service.httpMock.expectDELETE(getEndpointWithQueryStringRegexp(app.config)).respond(200, "");
+		component.deleteWidget(selectedWidget);
 
 		//	Operation started, awaiting resolution.        
 		expect(selectedWidget.$state).toBe(WidgetRegistry.WidgetState.deleting);
-		expect(scope.model.operationInProgress).toBe(true);
-		expect(scope.model.errorMessage).toBeFalsy();
+		expect(component.model.operationInProgress).toBe(true);
+		expect(component.model.errorMessage).toBeFalsy();
 
 		//	Operation resolution.        
 		service.httpMock.flush();
 		expect(selectedWidget.$state).toBe(WidgetRegistry.WidgetState.deleted);
-		expect(scope.model.widgets).toContain(selectedWidget);
-		expect(scope.model.errorMessage).toBeFalsy();
+		expect(component.model.widgets).toContain(selectedWidget);
+		expect(component.model.errorMessage).toBeFalsy();
 	});
 
 	it("keeps widget as newly added on the list if operation fails", function() {
-		var data = setupGetWidgetsSuccess();
-		var scope = createController(<WidgetRegistry.WidgetManagerScope>controller.rootScope.$new());
+		let data = setupGetWidgetsSuccess();
+		let component = createWidgetManagerController();
+		service.httpMock.flush();	//	Make sure GET all goes through.
 
-		service.httpMock.expectDELETE(getEndpointWithQueryStringRegexp(app.config)).respond(500, "");
-
-		var selectedWidget = scope.model.widgets[1];
+		let selectedWidget = component.model.widgets[1];
 		selectedWidget.$state = WidgetRegistry.WidgetState.new;
 
-		scope.deleteWidget(selectedWidget);
+		service.httpMock.expectDELETE(getEndpointWithQueryStringRegexp(app.config)).respond(500, "");
+		component.deleteWidget(selectedWidget);
 
 		//	Operation started, awaiting resolution.        
 		expect(selectedWidget.$state).toBe(WidgetRegistry.WidgetState.deleting);
-		expect(scope.model.operationInProgress).toBe(true);
-		expect(scope.model.errorMessage).toBeFalsy();
+		expect(component.model.operationInProgress).toBe(true);
+		expect(component.model.errorMessage).toBeFalsy();
 
 		//	Operation resolution.        
 		service.httpMock.flush();
 		expect(selectedWidget.$state).toBe(WidgetRegistry.WidgetState.new);
-		expect(scope.model.widgets).toContain(selectedWidget);
-		expect(scope.model.errorMessage).toBeTruthy();
+		expect(component.model.widgets).toContain(selectedWidget);
+		expect(component.model.errorMessage).toBeTruthy();
 	});
 
 	it("keeps widget as existing on the list if operation fails", function() {
-		var data = setupGetWidgetsSuccess();
-		var scope = createController(<WidgetRegistry.WidgetManagerScope>controller.rootScope.$new());
+		let data = setupGetWidgetsSuccess();
+		let component = createWidgetManagerController();
+		service.httpMock.flush();	//	Make sure GET all goes through.
 
-		service.httpMock.expectDELETE(getEndpointWithQueryStringRegexp(app.config)).respond(500, "");
-
-		var selectedWidget = scope.model.widgets[1];
+		let selectedWidget = component.model.widgets[1];
 		selectedWidget.$state = WidgetRegistry.WidgetState.existing;
 
-		scope.deleteWidget(selectedWidget);
+		service.httpMock.expectDELETE(getEndpointWithQueryStringRegexp(app.config)).respond(500, "");
+		component.deleteWidget(selectedWidget);
 
 		//	Operation started, awaiting resolution.        
 		expect(selectedWidget.$state).toBe(WidgetRegistry.WidgetState.deleting);
-		expect(scope.model.operationInProgress).toBe(true);
-		expect(scope.model.errorMessage).toBeFalsy();
+		expect(component.model.operationInProgress).toBe(true);
+		expect(component.model.errorMessage).toBeFalsy();
 
 		//	Operation resolution.        
 		service.httpMock.flush();
 		expect(selectedWidget.$state).toBe(WidgetRegistry.WidgetState.existing);
-		expect(scope.model.widgets).toContain(selectedWidget);
-		expect(scope.model.errorMessage).toBeTruthy();
+		expect(component.model.widgets).toContain(selectedWidget);
+		expect(component.model.errorMessage).toBeTruthy();
 	});
 
 	it("keeps widget originally w/o state as existing on the list if operation fails", function() {
-		var data = setupGetWidgetsSuccess();
-		var scope = createController(<WidgetRegistry.WidgetManagerScope>controller.rootScope.$new());
+		let data = setupGetWidgetsSuccess();
+		let component = createWidgetManagerController();
+		service.httpMock.flush();	//	Make sure GET all goes through.
 
-		service.httpMock.expectDELETE(getEndpointWithQueryStringRegexp(app.config)).respond(500, "");
-
-		var selectedWidget = scope.model.widgets[1];
+		let selectedWidget = component.model.widgets[1];
 		delete selectedWidget.$state;
 
-		scope.deleteWidget(selectedWidget);
+		service.httpMock.expectDELETE(getEndpointWithQueryStringRegexp(app.config)).respond(500, "");
+		component.deleteWidget(selectedWidget);
 
 		//	Operation started, awaiting resolution.        
 		expect(selectedWidget.$state).toBe(WidgetRegistry.WidgetState.deleting);
-		expect(scope.model.operationInProgress).toBe(true);
-		expect(scope.model.errorMessage).toBeFalsy();
+		expect(component.model.operationInProgress).toBe(true);
+		expect(component.model.errorMessage).toBeFalsy();
 
 		//	Operation resolution.        
 		service.httpMock.flush();
 		expect(selectedWidget.$state).toBe(WidgetRegistry.WidgetState.existing);
-		expect(scope.model.widgets).toContain(selectedWidget);
-		expect(scope.model.errorMessage).toBeTruthy();
+		expect(component.model.widgets).toContain(selectedWidget);
+		expect(component.model.errorMessage).toBeTruthy();
 	});
 
 	/** 
-	 * Creates controller and ensures initial get widgets operation completes according to expectations set from the outside.
-	 * @param scope Scope instance to use for controller configuration.
-	 * @returns Configured scope instance.
-	 */	
-	function createController(scope: WidgetRegistry.WidgetManagerScope): WidgetRegistry.WidgetManagerScope {
-		controller.factory(controllerName, {
-			appConfig: app.config,
-			$scope: scope,
+	 * Creates and initializes an instance of the WidgetManagerController component.
+	 */
+	function createWidgetManagerController(): WidgetRegistry.IWidgetManagerController {
+		let dependencies = {
 			widgetService: service.instance,
-			$modal: controller.modal
-		});
-		service.httpMock.flush();
+			appConfig: app.config,
+			$q: controller.promises
+		};	
 
-		return scope;		
+		let component = <WidgetRegistry.IWidgetManagerController>controller.factory(controllerName, { $scope: controller.rootScope.$new(), locals: dependencies });
+		component.$onInit();
+
+		controller.rootScope.$digest();
+
+		return component;
 	}
 
 	/** Sets up successful getWidgets() operation with fake data. */
 	function setupGetWidgetsSuccess(): WidgetRegistry.WidgetList {
-		var data = [
+		let data = [
 			createFakeWidgetInstance(),
 			createFakeWidgetInstance(),
 			createFakeWidgetInstance()

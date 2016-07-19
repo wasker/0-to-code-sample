@@ -113,7 +113,11 @@ describe("widgetEditorController", function() {
 	 * @param model Editor model.
 	 */
 	function createWidgetEditorController(model: WidgetRegistry.WidgetEditorModel): WidgetRegistry.IWidgetEditorController {
-		let component = <WidgetRegistry.IWidgetEditorController>controller.factory(controllerName, { $scope: controller.rootScope.$new() }, { model, appConfig: app.config });
+		let dependencies = {
+			appConfig: app.config
+		};	
+
+		let component = <WidgetRegistry.IWidgetEditorController>controller.factory(controllerName, { $scope: controller.rootScope.$new(), dependencies }, { model });
 		component.$onInit();
 
 		return component;
