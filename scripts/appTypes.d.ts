@@ -1,6 +1,4 @@
-/// <reference path="../typings/angularjs/angular.d.ts" />
-/// <reference path="../typings/angular-ui-bootstrap/angular-ui-bootstrap.d.ts" />
-
+/// <reference path="../typings/tsd.d.ts" />
 /// <reference path="widgetState.ts" />
 
 declare namespace WidgetRegistry {
