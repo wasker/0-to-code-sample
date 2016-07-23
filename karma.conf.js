@@ -21,6 +21,8 @@ module.exports = function(config) {
     exclude: [
       "./wwwroot/js/app.min.js",
       "./wwwroot/js/templates.js",
+      "./wwwroot/js/systemjs.config.js",
+      "./wwwroot/js/a2/**/*.*",
     ],
 
     reporters: ["progress", "coverage"],

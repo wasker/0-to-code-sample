@@ -20,6 +20,7 @@ var gulp = require("gulp"),
 
 var paths = {
   webroot: "./" + project.webroot + "/",
+  nodeModules: "./node_modules/",
   appScripts: "./scripts/",
   appTests: "./tests/frontend/",
   templates: "./scripts/templates/",
@@ -35,6 +36,7 @@ paths.templatesOut = paths.webroot + "templates/";
 paths.templateFiles = paths.templates + "**/*.html";
 paths.styleSources = paths.appStyles + "**/*.scss";
 paths.stylesOut = project.webroot + "/css/";
+paths.libOut = project.webroot + "/lib/";
 
 //  gulp clean
 gulp.task("clean", function (cb) {
@@ -73,7 +75,7 @@ gulp.task("compile-app-run-tests", ["compile-app"], function (done) {
   runTests(done);
 });
 
-gulp.task("build-app", ["copy-templates", "compile-styles", "compile-app"], function () {
+gulp.task("build-app", ["copy-templates", "copy-libs", "compile-styles", "compile-app"], function () {
 });
 
 gulp.task("build-backend", function (cb) {
@@ -100,6 +102,26 @@ gulp.task("compile-app", function () {
   return tscResult.js
       .pipe(sourcemaps.write("maps/"))                  //  Relative to appOut.
       .pipe(gulp.dest(paths.appOut));
+});
+
+gulp.task("copy-libs", function () {
+  gulp.src(paths.appScripts + "systemjs.config.js").pipe(gulp.dest(paths.appOut));
+
+  gulp.src(paths.nodeModules + "@angular/**/bundles/*.min.js").pipe(gulp.dest(paths.libOut + "@angular"));
+  gulp.src(paths.nodeModules + "rxjs/**/*.js*").pipe(gulp.dest(paths.libOut + "rxjs"));
+  gulp.src(paths.nodeModules + "core-js/client/*.min.js").pipe(gulp.dest(paths.libOut + "core-js/client"));
+  gulp.src(paths.nodeModules + "systemjs/dist/*.js").pipe(gulp.dest(paths.libOut + "systemjs/dist"));
+  gulp.src(paths.nodeModules + "zone.js/dist/*.min.js").pipe(gulp.dest(paths.libOut + "zone.js/dist"));
+  gulp.src([paths.nodeModules + "angular2-in-memory-web-api/index.js", paths.nodeModules + "angular2-in-memory-web-api/in-memory-backend.service.js", paths.nodeModules + "angular2-in-memory-web-api/http-status-codes.js"], {
+      base: "."
+    })
+    .pipe(concat("index.min.js"))
+    .pipe(uglify())
+    .pipe(gulp.dest(paths.libOut + "angular2-in-memory-web-api"));
+  gulp.src(paths.nodeModules + "reflect-metadata/Reflect.js")
+    .pipe(concat("reflect.min.js"))
+    .pipe(uglify())
+    .pipe(gulp.dest(paths.libOut + "reflect-metadata"));
 });
 
 gulp.task("copy-templates", function () {

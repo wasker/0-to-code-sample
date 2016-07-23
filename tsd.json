@@ -25,6 +25,12 @@
     },
     "bootstrap/bootstrap.d.ts": {
       "commit": "a59cec35c61820b421d31ae91f9f02cad41ed197"
+    },
+    "node/node.d.ts": {
+      "commit": "c6c068935a58aa58087a309740bcf933600140b8"
+    },
+    "core-js/core-js.d.ts": {
+      "commit": "c6c068935a58aa58087a309740bcf933600140b8"
     }
   }
 }
