@@ -1,5 +1,8 @@
 import { upgradeAdapter } from "./upgrade";
+import { mixComponents } from "./mix";
 
-upgradeAdapter.bootstrap(document.getElementById("widgetRegistryApp"), ["widgetRegistryApp"], {
-    strictDi: true
-});
+//  Must be before bootstrap.
+mixComponents();
+
+upgradeAdapter
+    .bootstrap(document.getElementById("widgetRegistryApp"), ["widgetRegistryApp"], { strictDi: true });

@@ -1,6 +1,3 @@
-/// <reference path="../typings/tsd.d.ts" />
-/// <reference path="widgetState.ts" />
-
 declare namespace WidgetRegistry {
 	/** Application module name. */
 	var appModuleName: string;

@@ -1,5 +1,3 @@
-/// <reference path="../appTypes.d.ts" />
-
 namespace WidgetRegistry {
 
 	/** Widget manager controller. */	

@@ -2,6 +2,8 @@
 	{{$ctrl.model.errorMessage}}
 </div>
 
+<test-widget [widgets]="$ctrl.model.widgets"></test-widget>
+
 <widget-table data-widgets="$ctrl.model.widgets"
 							data-table-class="table-striped"
 							data-on-edit-widget="$ctrl.editWidget(widget)" 

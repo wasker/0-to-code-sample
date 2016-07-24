@@ -1,5 +1,3 @@
-/// <reference path="../appTypes.d.ts" />
-
 namespace WidgetRegistry {
 
 	/** Modal dialog host. */	
