@@ -75,7 +75,7 @@ gulp.task("compile-app-run-tests", ["compile-app"], function (done) {
   runTests(done);
 });
 
-gulp.task("build-app", ["copy-templates", "copy-libs", "compile-styles", "compile-app"], function () {
+gulp.task("build-app", ["copy-templates", "copy-libs", "compile-styles", "compile-app", "compile-angular2-upgrade"], function () {
 });
 
 gulp.task("build-backend", function (cb) {
@@ -102,6 +102,18 @@ gulp.task("compile-app", function () {
   return tscResult.js
       .pipe(sourcemaps.write("maps/"))                  //  Relative to appOut.
       .pipe(gulp.dest(paths.appOut));
+});
+
+gulp.task("compile-angular2-upgrade", function () {
+  //  NOTE: cannot build modules into 1 file.
+  var tscProject = tsc.createProject(paths.appScripts + "a2/tsconfig.json");
+  var tscResult = tscProject.src()
+      .pipe(sourcemaps.init())
+      .pipe(tsc(tscProject));
+
+  return tscResult.js
+      .pipe(sourcemaps.write("maps/"))                  //  Relative to appOut.
+      .pipe(gulp.dest(paths.appOut + "a2/"));
 });
 
 gulp.task("copy-libs", function () {
