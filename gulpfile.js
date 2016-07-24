@@ -30,6 +30,7 @@ var paths = {
 
 paths.appOut = paths.webroot + "js/";
 paths.appSources = paths.appScripts + "**/*.ts";
+paths.appSourcesA2 = paths.appScripts + "a2/**/*.ts";
 paths.testsOut = paths.webroot + "/tests/"
 paths.testSources = paths.appTests + "**/*.ts";
 paths.templatesOut = paths.webroot + "templates/";
@@ -61,6 +62,7 @@ gulp.task("run-tests-backend", function (cb) {
 //  gulp watch-app
 gulp.task("watch-app", ["build-app"], function () {
   gulp.watch(paths.appSources, ["compile-app"]);
+  gulp.watch(paths.appSourcesA2, ["compile-angular2-upgrade"]);
   gulp.watch(paths.styleSources, ["compile-styles"]);
   gulp.watch(paths.templateFiles, ["copy-templates"]);
 });
@@ -68,10 +70,11 @@ gulp.task("watch-app", ["build-app"], function () {
 //  gulp watch-tests
 gulp.task("watch-tests", ["run-tests"], function (done) {
   gulp.watch(paths.appSources, ["compile-app-run-tests"]);
+  gulp.watch(paths.appSourcesA2, ["compile-app-run-tests"]);
   gulp.watch(paths.testSources, ["run-tests"]);
 });
 
-gulp.task("compile-app-run-tests", ["compile-app"], function (done) {
+gulp.task("compile-app-run-tests", ["compile-app", "compile-angular2-upgrade"], function (done) {
   runTests(done);
 });
 
