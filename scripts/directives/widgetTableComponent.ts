@@ -40,7 +40,7 @@ namespace WidgetRegistry {
 	angular.module(appModuleName).component("widgetTable", {
 		templateUrl: "/templates/widgetTable.html",		// TODO
 		bindings: {
-			model: "=widgets",
+			model: "=",	//	Can't use "=widgets" anymore.
 			tableClass: "@",
 			onEditWidget: "&",
 			onDeleteWidget: "&",
