@@ -167,7 +167,7 @@ function runTests(doneCallback) {
   }, doneCallback);
 }
 
-gulp.task("build-tests", function () {
+gulp.task("build-tests", ["copy-test-libs"], function () {
   var tscProject = tsc.createProject(paths.appTests + "tsconfig.json");
   var tscResult = tscProject.src()
                     .pipe(sourcemaps.init())
@@ -176,4 +176,9 @@ gulp.task("build-tests", function () {
   return tscResult.js
           .pipe(sourcemaps.write("maps/"))                  //  Relative to testsOut.
           .pipe(gulp.dest(paths.testsOut));
+});
+
+gulp.task("copy-test-libs", function () {
+  gulp.src(paths.appTests + "karma.js").pipe(gulp.dest(paths.testsOut));
+  gulp.src(paths.nodeModules + "@angular/**/*.js").pipe(gulp.dest(paths.libOut + "@angular"));
 });
