@@ -14,15 +14,17 @@ module.exports = function(config) {
       "./wwwroot/lib/jquery/dist/jquery.min.js",
 
       "./wwwroot/lib/angular/angular.min.js",
+      { pattern: "./wwwroot/lib/angular/angular.js", included: false },
       "./wwwroot/lib/angular-ui-router/release/angular-ui-router.min.js",
       "./wwwroot/lib/angular-bootstrap/ui-bootstrap-tpls.min.js",
 
       "./wwwroot/lib/zone.js/dist/zone.min.js",
+      "./wwwroot/lib/zone.js/dist/async-test.js",
       "./wwwroot/lib/reflect-metadata/reflect.min.js",
       "./wwwroot/lib/systemjs/dist/system.js",
-      { pattern: "./wwwroot/lib/@angular/**/*.js", included: false },
-      { pattern: "./wwwroot/lib/core-js/**/*.js", included: false },
-      { pattern: "./wwwroot/lib/rxjs/**/*.js", included: false },
+      { pattern: "./wwwroot/lib/@angular/**/*.js", included: false, watched: false },
+      { pattern: "./wwwroot/lib/core-js/**/*.js", included: false, watched: false },
+      { pattern: "./wwwroot/lib/rxjs/**/*.js", included: false, watched: false },
 
       { pattern: "./wwwroot/js/systemjs.config.js", included: false },
 
@@ -30,6 +32,7 @@ module.exports = function(config) {
       "./node_modules/jasmine-jquery/lib/jasmine-jquery.js",
 
       "./wwwroot/tests/karma.js",
+      { pattern: "./wwwroot/tests/*.js", included: false },
       
       { pattern: "./wwwroot/js/a2/**/*.*", included: false },
       "./wwwroot/js/app.js",
@@ -40,19 +43,18 @@ module.exports = function(config) {
     ],
     exclude: [
       "./wwwroot/js/app.min.js",
-      "./wwwroot/js/templates.js",
+      "./wwwroot/js/templates.js"
     ],
 
-    reporters: ["progress"],
-    // reporters: ["progress", "coverage"],
+    reporters: ["progress", "coverage"],
 
-    // preprocessors: {
-    //   "./wwwroot/js/**/*.js": ["coverage"]
-    // },
+    preprocessors: {
+      "./wwwroot/js/**/*.js": ["coverage"]
+    },
 
-    // coverageReporter: {
-    //   type: "html",
-    //   dir: "./wwwroot/tests/coverage/"
-    // }
+    coverageReporter: {
+      type: "html",
+      dir: "./wwwroot/tests/coverage/"
+    }
   });
 };

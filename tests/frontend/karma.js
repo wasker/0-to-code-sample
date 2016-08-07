@@ -1,7 +1,6 @@
 // Turn on full stack traces in errors to help debugging
 // Error.stackTraceLimit = Infinity;
-Error.stackTraceLimit = 0;
-
+Error.stackTraceLimit = Infinity;
 
 jasmine.DEFAULT_TIMEOUT_INTERVAL = 3000;
 
@@ -11,6 +10,17 @@ __karma__.loaded = function() {};
 
 // Make sure Angular's testing modules are being loaded.
 System.packageWithIndex = true;
+
+//  Remaps known paths to new location.
+var pathRegexp = /(.+\:\d+)(.+\/)scripts\/a2\/(.+)/;
+var systemLocate = System.locate;
+System.locate = function(load) {
+  var System = this; // its good to ensure exact instance-binding
+  return Promise.resolve(systemLocate.call(this, load)).then(function (address) {
+    var parts = address.match(pathRegexp);
+    return (parts && parts[1] + "/base/wwwroot/js/a2/" + parts[3] + ".js") || address;
+  });
+}
 
 // Prefix all module paths with a base path.
 System.config({

@@ -45,9 +45,9 @@ function startApplication(): WidgetRegistryAppMock {
 
 	//	Fake successful downloads for templates.
 	angular.mock.inject(($httpBackend: ng.IHttpBackendService) => {
-		$httpBackend.whenGET(/templates\/.+/).respond(200);
+		$httpBackend.whenGET(/templates\/.+/).respond(200, "<div></div>");
 	});
-	
+
 	return result;
 }
 

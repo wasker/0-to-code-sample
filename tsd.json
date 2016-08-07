@@ -31,6 +31,9 @@
     },
     "core-js/core-js.d.ts": {
       "commit": "c6c068935a58aa58087a309740bcf933600140b8"
+    },
+    "systemjs/systemjs.d.ts": {
+      "commit": "bc38caf4c4781b8a9b13785a0529fcd47fd1bfb4"
     }
   }
 }

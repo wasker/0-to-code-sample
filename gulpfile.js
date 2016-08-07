@@ -68,10 +68,9 @@ gulp.task("watch-app", ["build-app"], function () {
 });
 
 //  gulp watch-tests
-gulp.task("watch-tests", ["run-tests"], function (done) {
-  gulp.watch(paths.appSources, ["compile-app-run-tests"]);
-  gulp.watch(paths.appSourcesA2, ["compile-app-run-tests"]);
-  gulp.watch(paths.testSources, ["run-tests"]);
+gulp.task("watch-tests", ["build-tests"], function (done) {
+  gulp.watch([paths.appSources, paths.appSourcesA2], ["compile-app-run-tests"]);
+  gulp.watch([paths.testSources, paths.appTests + "karma.js"], ["build-tests"]);
 });
 
 gulp.task("compile-app-run-tests", ["compile-app", "compile-angular2-upgrade"], function (done) {
@@ -181,4 +180,5 @@ gulp.task("build-tests", ["copy-test-libs"], function () {
 gulp.task("copy-test-libs", function () {
   gulp.src(paths.appTests + "karma.js").pipe(gulp.dest(paths.testsOut));
   gulp.src(paths.nodeModules + "@angular/**/*.js").pipe(gulp.dest(paths.libOut + "@angular"));
+  gulp.src(paths.nodeModules + "zone.js/dist/*.js").pipe(gulp.dest(paths.libOut + "zone.js/dist"));
 });

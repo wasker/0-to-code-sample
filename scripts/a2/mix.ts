@@ -7,6 +7,8 @@ export function mixComponents(): void {
     angular.module(WidgetRegistry.appModuleName).directive(WidgetManagerController.DowngradeDirectiveName, <ng.IDirectiveFactory>upgradeAdapter.downgradeNg2Component(WidgetManagerController));
 
     upgradeAdapter.upgradeNg1Provider("$q");    
+    upgradeAdapter.upgradeNg1Provider("$http");    
+    upgradeAdapter.upgradeNg1Provider("$httpBackend");    
 
     upgradeAdapter.upgradeNg1Provider("appConfig");    
     upgradeAdapter.upgradeNg1Provider("widgetService");    

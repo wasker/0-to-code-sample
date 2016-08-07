@@ -3,8 +3,8 @@ import { Component, Input, Inject } from "@angular/core";
 
 import { testWidgetComponent } from "./testWidgetComponent"; 
 
-const WidgetTable = upgradeAdapter.upgradeNg1Component("widgetTable");
-const WidgetEditor = upgradeAdapter.upgradeNg1Component("widgetEditor");
+export const WidgetTable = upgradeAdapter.upgradeNg1Component("widgetTable");
+export const WidgetEditor = upgradeAdapter.upgradeNg1Component("widgetEditor");
 
 /** Widget manager controller. */
 @Component({
